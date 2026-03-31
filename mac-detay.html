@@ -2,261 +2,187 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Maç Detayı | Bobblekolik</title>
     <style>
         :root {
-            --bg-color: #e8e1d1;
-            --text-color: #3d3d3d;
-            --card-bg: #f2ede1;
-            --header-bg: #800000;
-            --header-text: #e8e1d1;
+            /* AYDINLIK TEMA */
+            --bg: #f8f9fa; --card: #ffffff; --text: #2d3436; 
+            --primary: #800000; --accent: #ffd700; --border: #e0e0e0;
+            --sub-text: #636e72; --header-text: #ffffff;
+            --score-bg: #eee6d6;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
+        [data-theme="dark"] {
+            /* KARANLIK TEMA */
+            --bg: #121212; --card: #1e1e1e; --text: #e8e1d1;
+            --border: #333; --sub-text: #a0a0a0;
+            --score-bg: #2a2a2a;
         }
 
-        .header {
-            background: var(--header-bg);
-            color: var(--header-text);
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom: 8px solid #1a1a1a;
-            position: relative;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.4; }
 
-        /* DİL SEÇİCİ */
-        .lang-picker { position: absolute; top: 15px; right: 20px; display: flex; gap: 10px; z-index: 100; }
-        .lang-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ffd700; cursor: pointer; overflow: hidden; transition: 0.3s; opacity: 0.6; padding: 0; background: white; }
-        .lang-btn.active { opacity: 1; transform: scale(1.1); border-color: white; }
+        /* Üst Navigasyon */
+        .back-nav { 
+            position: sticky; top: 0; z-index: 1000; height: 60px;
+            background: var(--primary); display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 15px; border-bottom: 2px solid var(--accent);
+        }
+        .back-btn { color: white; text-decoration: none; font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 5px; }
+        
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .theme-toggle { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        
+        .lang-picker { display: flex; gap: 5px; }
+        .lang-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--accent); overflow: hidden; background: #fff; cursor: pointer; padding: 0; opacity: 0.5; }
+        .lang-btn.active { opacity: 1; border-width: 2px; transform: scale(1.1); }
         .lang-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-        .back-btn {
-            position: absolute;
-            left: 20px;
-            top: 40px;
-            background: #ffd700;
-            color: #1a1a1a;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 900;
-            box-shadow: 0 4px 0 #b8860b;
-            transition: 0.2s;
-            font-size: 14px;
+        /* Header / Skor Alanı */
+        .match-header {
+            background: linear-gradient(to bottom, var(--primary), var(--bg));
+            padding: 30px 15px 50px 15px;
+            text-align: center;
         }
-
-        .back-btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: -40px auto 50px auto;
-            padding: 0 20px;
-        }
-
-        .match-detail-card {
-            background: var(--card-bg);
-            border-radius: 30px;
-            padding: 50px 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            border-top: 10px solid #800000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-
-        .match-meta {
-            font-weight: 800;
-            color: #666;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .match-meta { 
+            font-size: 12px; font-weight: 800; color: white; opacity: 0.8; 
+            margin-bottom: 20px; background: rgba(0,0,0,0.2); display: inline-block;
+            padding: 4px 12px; border-radius: 20px;
         }
 
         .score-board {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 40px;
-            width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 15px;
         }
-
-        .team-box {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            cursor: pointer; /* Tıklanabilir yaptık */
-            transition: transform 0.2s;
+        .team-box { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            cursor: pointer;
         }
-        
-        .team-box:hover { transform: scale(1.05); }
-
-        .team-logo-large {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: white;
-            padding: 10px;
-            border: 5px solid #800000;
-            object-fit: cover;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+        .team-logo-large { 
+            width: 85px; height: 85px; border-radius: 50%; background: white; 
+            border: 3px solid var(--accent); object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-
-        .team-name {
-            font-size: 28px;
-            font-weight: 900;
-            color: #1a1a1a;
-        }
+        .team-name { font-size: 14px; font-weight: 900; color: var(--text); text-transform: uppercase; text-align: center; }
 
         .score-display {
-            font-size: 80px;
-            font-weight: 900;
-            color: #800000;
-            text-shadow: 4px 4px 0px rgba(0,0,0,0.1);
-            background: #eee6d6;
-            padding: 10px 30px;
-            border-radius: 20px;
-            min-width: 120px;
-            text-align: center;
+            font-size: 42px; font-weight: 900; color: var(--primary); 
+            background: var(--score-bg); padding: 10px 20px; border-radius: 15px;
+            min-width: 90px; text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
         }
 
-        .mvp-section {
-            width: 100%;
-            margin-top: 50px;
-            background: #1a1a1a;
-            border-radius: 20px;
-            padding: 30px;
-            color: #ffd700;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-left: 15px solid #ffd700;
-        }
-
-        .mvp-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .mvp-label {
-            font-size: 14px;
-            font-weight: 800;
-            color: #fff;
-            background: #800000;
-            padding: 5px 15px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            display: inline-block;
-        }
-
-        .mvp-name {
-            font-size: 24px;
-            font-weight: 900;
-            text-transform: uppercase;
-            cursor: pointer; /* Tıklanabilir yaptık */
-            text-decoration: underline rgba(255, 215, 0, 0);
-            transition: 0.3s;
+        /* MVP Bölümü */
+        .container { padding: 0 15px; margin-top: -25px; }
+        
+        .mvp-card {
+            background: var(--card); border-radius: 20px; padding: 20px;
+            border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
         }
         
-        .mvp-name:hover { text-decoration: underline rgba(255, 215, 0, 1); color: white; }
-
-        .rating-box {
-            text-align: center;
+        .mvp-badge {
+            background: var(--accent); color: #000; font-size: 10px; font-weight: 900;
+            padding: 4px 12px; border-radius: 10px; margin-bottom: 10px; letter-spacing: 1px;
         }
 
-        .rating-circle {
-            font-size: 42px;
-            font-weight: 900;
-            color: #ffd700;
+        .mvp-name { 
+            font-size: 20px; font-weight: 900; color: var(--text); 
+            text-transform: uppercase; margin-bottom: 15px; cursor: pointer;
+            text-decoration: underline dotted var(--accent);
         }
 
-        .rating-text {
-            font-size: 12px;
-            font-weight: 700;
-            color: #aaa;
-            text-transform: uppercase;
+        .rating-container {
+            display: flex; flex-direction: column; align-items: center;
+            background: var(--bg); padding: 15px; border-radius: 15px; width: 100%;
         }
+        .rating-value { font-size: 36px; font-weight: 900; color: var(--primary); }
+        .rating-label { font-size: 10px; font-weight: 700; color: var(--sub-text); text-transform: uppercase; }
+
+        /* Mobil Alt Bilgi */
+        .info-section { margin-top: 20px; text-align: center; font-size: 12px; color: var(--sub-text); font-style: italic; }
+
     </style>
 </head>
-<body>
-
-<div class="header">
-    <div class="lang-picker">
-        <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
-        <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
-        <button class="lang-btn" onclick="setLang('pt')" id="btn-pt"><img src="https://flagcdn.com/w40/pt.png"></button>
+<body data-theme="dark"> <nav class="back-nav">
+    <a href="index.html" class="back-btn" id="txt-back">⬅ LİG MERKEZİ</a>
+    <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">☀️</button>
+        <div class="lang-picker">
+            <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
+            <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
+            <button class="lang-btn" onclick="setLang('pt')" id="btn-pt"><img src="https://flagcdn.com/w40/pt.png"></button>
+        </div>
     </div>
-    <a href="index.html" class="back-btn" id="txt-back">← LİG MERKEZİ</a>
-    <div id="txt-title" style="font-size: 24px; font-weight: 900; letter-spacing: 4px;">MAÇ DETAYLARI</div>
+</nav>
+
+<div class="match-header">
+    <div class="match-meta" id="m-date">...</div>
+    
+    <div class="score-board">
+        <div class="team-box" id="box-team1">
+            <img id="logo1" src="" class="team-logo-large">
+            <div id="team1" class="team-name">---</div>
+        </div>
+        
+        <div id="m-score" class="score-display">VS</div>
+        
+        <div class="team-box" id="box-team2">
+            <img id="logo2" src="" class="team-logo-large">
+            <div id="team2" class="team-name">---</div>
+        </div>
+    </div>
 </div>
 
 <div class="container">
-    <div class="match-detail-card">
-        <div class="match-meta" id="m-date">YÜKLENİYOR...</div>
+    <div id="mvp-container" class="mvp-card" style="display: none;">
+        <span class="mvp-badge" id="txt-mvp-label">MAÇIN ADAMI</span>
+        <div id="m-mvp" class="mvp-name">---</div>
         
-        <div class="score-board">
-            <div class="team-box" id="box-team1">
-                <img id="logo1" src="" class="team-logo-large">
-                <div id="team1" class="team-name">---</div>
-            </div>
-            
-            <div id="m-score" class="score-display">0 - 0</div>
-            
-            <div class="team-box" id="box-team2">
-                <img id="logo2" src="" class="team-logo-large">
-                <div id="team2" class="team-name">---</div>
-            </div>
+        <div class="rating-container">
+            <div id="m-rating" class="rating-value">0.0</div>
+            <div class="rating-label" id="txt-rating-label">MAÇ PUANI</div>
         </div>
-
-        <div id="mvp-container" class="mvp-section" style="display: none;">
-            <div class="mvp-info">
-                <div>
-                    <span class="mvp-label" id="txt-mvp-label">MAÇIN ADAMI (MVP)</span><br>
-                    <span id="m-mvp" class="mvp-name">---</span>
-                </div>
-            </div>
-            <div class="rating-box">
-                <div id="m-rating" class="rating-circle">0.0</div>
-                <div class="rating-text" id="txt-rating-label">MAÇ PUANI</div>
-            </div>
-        </div>
+    </div>
+    
+    <div class="info-section" id="txt-info">
+        Maç detayları ve oyuncu performansları Bobblekolik tarafından onaylanmıştır.
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script>
-    const firebaseConfig = { 
-        apiKey: "AIzaSyBEi_PQ2oYKW23Fu65M7MKPFKELRbqY6XQ", 
-        authDomain: "bobblekolik.firebaseapp.com", 
-        projectId: "bobblekolik", 
-        storageBucket: "bobblekolik.firebasestorage.app", 
-        messagingSenderId: "566665011913", 
-        appId: "1:566665011913:web:4e2570f7291f82fdb76318" 
-    };
+    const firebaseConfig = { apiKey: "AIzaSyBEi_PQ2oYKW23Fu65M7MKPFKELRbqY6XQ", authDomain: "bobblekolik.firebaseapp.com", projectId: "bobblekolik", storageBucket: "bobblekolik.firebasestorage.app", messagingSenderId: "566665011913", appId: "1:566665011913:web:4e2570f7291f82fdb76318" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     const translations = {
-        tr: { back: "← LİG MERKEZİ", title: "MAÇ DETAYLARI", mvp: "MAÇIN ADAMI (MVP)", score: "MAÇ PUANI", loading: "YÜKLENİYOR..." },
-        en: { back: "← LEAGUE CENTER", title: "MATCH DETAILS", mvp: "MAN OF THE MATCH (MVP)", score: "MATCH RATING", loading: "LOADING..." },
-        pt: { back: "← CENTRO DA LIGA", title: "DETALHES DO JOGO", mvp: "HOMEM DO JOGO (MVP)", score: "AVALIAÇÃO", loading: "CARREGANDO..." }
+        tr: { back: "⬅ LİG MERKEZİ", mvp: "MAÇIN ADAMI (MVP)", score: "MAÇ PUANI", loading: "YÜKLENİYOR...", info: "Maç detayları Bobblekolik tarafından onaylanmıştır." },
+        en: { back: "⬅ LEAGUE", mvp: "MAN OF THE MATCH", score: "MATCH RATING", loading: "LOADING...", info: "Match details are verified by Bobblekolik." },
+        pt: { back: "⬅ LIGA", mvp: "HOMEM DO JOGO", score: "AVALIAÇÃO", loading: "CARREGANDO...", info: "Detalhes verificados por Bobblekolik." }
     };
 
     let currentLang = 'tr';
+
+    // TEMA KONTROLÜ
+    function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById('theme-icon');
+        if (body.getAttribute('data-theme') === 'light') {
+            body.setAttribute('data-theme', 'dark');
+            icon.innerText = '☀️';
+            localStorage.setItem('match-theme', 'dark');
+        } else {
+            body.setAttribute('data-theme', 'light');
+            icon.innerText = '🌙';
+            localStorage.setItem('match-theme', 'light');
+        }
+    }
+
+    // Başlangıç Temasını Yükle (Varsayılan Dark)
+    const savedTheme = localStorage.getItem('match-theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+    document.getElementById('theme-icon').innerText = savedTheme === 'dark' ? '☀️' : '🌙';
 
     function setLang(lang) {
         currentLang = lang;
@@ -265,12 +191,9 @@
         
         const t = translations[lang];
         document.getElementById('txt-back').innerText = t.back;
-        document.getElementById('txt-title').innerText = t.title;
         document.getElementById('txt-mvp-label').innerText = t.mvp;
         document.getElementById('txt-rating-label').innerText = t.score;
-        if(document.getElementById('m-date').innerText.includes("YÜKLENİYOR") || document.getElementById('m-date').innerText.includes("LOADING") || document.getElementById('m-date').innerText.includes("CARREGANDO")) {
-            document.getElementById('m-date').innerText = t.loading;
-        }
+        document.getElementById('txt-info').innerText = t.info;
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -299,7 +222,6 @@
                         document.getElementById('logo2').src = logos[m.team2] || '';
                         document.getElementById('m-score').innerText = m.played ? `${m.score1} - ${m.score2}` : "VS";
                         
-                        // Takım Yönlendirmeleri
                         document.getElementById('box-team1').onclick = () => window.location.href = `takim.html?name=${encodeURIComponent(m.team1)}`;
                         document.getElementById('box-team2').onclick = () => window.location.href = `takim.html?name=${encodeURIComponent(m.team2)}`;
 
@@ -307,8 +229,6 @@
                             document.getElementById('mvp-container').style.display = 'flex';
                             document.getElementById('m-mvp').innerText = m.mvp;
                             document.getElementById('m-rating').innerText = m.rating || '0.0';
-                            
-                            // MVP Oyuncu Yönlendirme
                             document.getElementById('m-mvp').onclick = () => window.location.href = `oyuncu-detay.html?name=${encodeURIComponent(m.mvp)}`;
                         }
                     }
