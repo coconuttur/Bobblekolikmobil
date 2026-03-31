@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bobblekolik | Oyuncu Profili</title>
+    <style>
+        :root {
+            --bg-color: #e8e1d1;
+            --card-bg: #fdfbf7;
+            --accent-red: #800000;
+            --accent-gold: #ffd700;
+            --text-dark: #2c2c2c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(128, 0, 0, 0.2);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-btn:hover { transform: translateX(-5px); background: #a00000; }
+
+        .lang-picker { display: flex; gap: 8px; }
+        .lang-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent-gold); cursor: pointer; overflow: hidden; opacity: 0.6; transition: 0.3s; padding: 0; background: white; }
+        .lang-btn.active { opacity: 1; transform: scale(1.1); border-color: var(--accent-red); }
+        .lang-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        .container { max-width: 1000px; margin: 0 auto 60px; padding: 0 20px; }
+
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border: 1px solid rgba(128, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 8px; height: 100%;
+            background: var(--accent-red);
+        }
+
+        .photo-wrapper { position: relative; }
+        .player-photo {
+            width: 220px; height: 220px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .info-content h1 { font-size: 48px; margin: 0; font-weight: 900; color: var(--accent-red); letter-spacing: -1px; }
+
+        /* Rozet Konteynırı */
+        .badges-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+
+        .team-badge, .country-badge {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #fff;
+            padding: 8px 18px;
+            border-radius: 50px;
+            width: fit-content;
+            transition: 0.3s;
+            border: 1px solid #eee;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .team-badge { cursor: pointer; }
+        .team-badge:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+
+        /* Takım Logosu (Yuvarlak) */
+        .badge-logo { width: 35px; height: 35px; object-fit: contain; border-radius: 50%; }
+
+        /* Ülke Bayrağı (Dikdörtgen) */
+        .badge-flag { width: 45px; height: 30px; object-fit: cover; border-radius: 4px; border: 1px solid #f0f0f0; }
+        
+        .badge-name { font-weight: 800; font-size: 16px; color: var(--text-dark); text-transform: uppercase; }
+
+        .season-tag { text-align: center; margin-top: 40px; margin-bottom: -15px; }
+        .season-tag span {
+            background: var(--accent-red);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 30px; }
+        .stat-item {
+            background: var(--card-bg);
+            padding: 25px 15px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            border-bottom: 5px solid #eee;
+            transition: 0.3s;
+        }
+        .stat-item:hover { border-bottom-color: var(--accent-red); transform: translateY(-5px); }
+        .stat-num { display: block; font-size: 36px; font-weight: 900; color: var(--accent-red); }
+        .stat-desc { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+        .bio-section {
+            background: var(--card-bg);
+            margin-top: 30px;
+            padding: 35px;
+            border-radius: 32px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+            border: 1px solid rgba(128,0,0,0.05);
+            position: relative;
+        }
+        .bio-section h2 {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bio-section h2::before { content: ''; width: 30px; height: 4px; background: var(--accent-gold); border-radius: 2px; }
+        .info-icon { font-size: 18px; color: var(--accent-gold); }
+
+        .bio-text { font-size: 16px; line-height: 1.8; color: #444; font-weight: 500; white-space: pre-line; }
+
+        .insta-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 20px;
+            font-weight: 900;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(220, 39, 67, 0.2);
+        }
+        .insta-btn:hover { transform: scale(1.02); box-shadow: 0 15px 25px rgba(220, 39, 67, 0.3); }
+
+        @media (max-width: 768px) {
+            .profile-card { flex-direction: column; text-align: center; }
+            .badges-container { align-items: center; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <a href="index.html" class="back-btn" id="btn-back">
+        <span id="lbl-back">GERİ DÖN</span>
+    </a>
+    <div class="lang-picker">
+        <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
+        <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
+        <button class="lang-btn" onclick="setLang('pt')" id="btn-pt"><img src="https://flagcdn.com/w40/pt.png"></button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="profile-card">
+        <div class="photo-wrapper">
+            <img id="p-foto" src="" class="player-photo" alt="Player">
+        </div>
+        <div class="info-content">
+            <h1 id="p-name">YÜKLENİYOR...</h1>
+            
+            <div class="badges-container">
+                <div class="team-badge" id="team-click-area">
+                    <img id="p-team-logo" src="" class="badge-logo">
+                    <span class="badge-name" id="p-team-name">-</span>
+                </div>
+
+                <div class="country-badge">
+                    <img id="p-country-logo" src="" class="badge-flag">
+                    <span class="badge-name" id="p-country-name">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="season-tag">
+        <span id="lbl-season">5. SEZON</span>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-item"><span class="stat-num" id="p-goals">0</span><span class="stat-desc" id="lbl-gol">GOL</span></div>
+        <div class="stat-item"><span class="stat-num" id="p-asist">0</span><span class="stat-desc" id="lbl-asist">ASİST</span></div>
+        <div class="stat-item"><span class="stat-num" id="p-rating">0.0</span><span class="stat-desc" id="lbl-rat">RATING</span></div>
+        <div class="stat-item"><span class="stat-num" id="p-mac">0</span><span class="stat-desc" id="lbl-mac">MAÇ</span></div>
+    </div>
+
+    <div class="bio-section">
+        <h2 id="lbl-bio">OYUNCU BİLGİ VE KARİYERİ <span class="info-icon">ⓘ</span></h2>
+        <p id="player-bio-text" class="bio-text"></p>
+    </div>
+
+    <a href="#" id="insta-link" target="_blank" class="insta-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="24" height="24">
+        <span id="lbl-insta">INSTAGRAM PROFILI</span>
+    </a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyBEi_PQ2oYKW23Fu65M7MKPFKELRbqY6XQ", authDomain: "bobblekolik.firebaseapp.com", projectId: "bobblekolik", storageBucket: "bobblekolik.firebasestorage.app", messagingSenderId: "566665011913", appId: "1:566665011913:web:4e2570f7291f82fdb76318" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerName = urlParams.get('name');
+
+    const translations = {
+        tr: { back: "← GERİ DÖN", bio: "OYUNCU BİLGİ VE KARİYERİ", gol: "GOL", asist: "ASİST", rat: "RATING", mac: "MAÇ", season: "5. SEZON", insta: "INSTAGRAM PROFİLİ" },
+        en: { back: "← GO BACK", bio: "PLAYER INFO & CAREER", gol: "GOALS", asist: "ASSISTS", rat: "RATING", mac: "MATCH", season: "SEASON 5", insta: "INSTAGRAM PROFILE" },
+        pt: { back: "← VOLTAR", bio: "INFO E CARREIRA", gol: "GOLOS", asist: "ASSISTÊNCIAS", rat: "AVALIAÇÃO", mac: "JOGO", season: "5ª TEMPORADA", insta: "PERFIL DO INSTAGRAM" }
+    };
+
+    function setLang(lang) {
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + lang).classList.add('active');
+        const t = translations[lang];
+        
+        document.getElementById('lbl-back').innerText = t.back;
+        document.getElementById('lbl-bio').innerHTML = `${t.bio} <span class="info-icon">ⓘ</span>`;
+        document.getElementById('lbl-gol').innerText = t.gol;
+        document.getElementById('lbl-asist').innerText = t.asist;
+        document.getElementById('lbl-rat').innerText = t.rat;
+        document.getElementById('lbl-mac').innerText = t.mac;
+        document.getElementById('lbl-season').innerText = t.season;
+        document.getElementById('lbl-insta').innerText = t.insta;
+    }
+
+    if(playerName) {
+        db.collection("players").where("pname", "==", playerName).onSnapshot(snap => {
+            if(!snap.empty) {
+                const data = snap.docs[0].data();
+                document.getElementById('p-name').innerText = data.pname.toUpperCase();
+                document.getElementById('p-foto').src = data.foto;
+                document.getElementById('p-team-name').innerText = data.pteam || "-";
+                document.getElementById('p-country-name').innerText = data.pülke || "-";
+                document.getElementById('p-goals').innerText = data.goals || 0;
+                document.getElementById('p-asist').innerText = data.asistsay || 0;
+                document.getElementById('p-rating').innerText = data.ratingoy || "0.0";
+                document.getElementById('p-mac').innerText = data.poyn || 0;
+                document.getElementById('player-bio-text').innerText = data.bilgi || "---";
+
+                if(data.instaoy) {
+                    const iLink = document.getElementById('insta-link');
+                    iLink.href = data.instaoy;
+                    iLink.style.display = 'flex';
+                }
+
+                db.collection("teams").where("name", "==", data.pteam).get().then(tSnap => {
+                    if(!tSnap.empty) {
+                        const tData = tSnap.docs[0].data();
+                        document.getElementById('p-team-logo').src = tData.logo;
+                        document.getElementById('team-click-area').onclick = () => {
+                            window.location.href = `takim.html?name=${encodeURIComponent(data.pteam)}`;
+                        };
+                    }
+                });
+
+                if(data.pülke) {
+                    db.collection("ülkeler").where("ülkead", "==", data.pülke).get().then(uSnap => {
+                        if(!uSnap.empty) {
+                            document.getElementById('p-country-logo').src = uSnap.docs[0].data().ülkefoto;
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    setLang('tr');
+</script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maç Detayı | Bobblekolik</title>
+    <style>
+        :root {
+            --bg-color: #e8e1d1;
+            --text-color: #3d3d3d;
+            --card-bg: #f2ede1;
+            --header-bg: #800000;
+            --header-text: #e8e1d1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 8px solid #1a1a1a;
+            position: relative;
+        }
+
+        /* DİL SEÇİCİ */
+        .lang-picker { position: absolute; top: 15px; right: 20px; display: flex; gap: 10px; z-index: 100; }
+        .lang-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ffd700; cursor: pointer; overflow: hidden; transition: 0.3s; opacity: 0.6; padding: 0; background: white; }
+        .lang-btn.active { opacity: 1; transform: scale(1.1); border-color: white; }
+        .lang-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            background: #ffd700;
+            color: #1a1a1a;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 900;
+            box-shadow: 0 4px 0 #b8860b;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .back-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: -40px auto 50px auto;
+            padding: 0 20px;
+        }
+
+        .match-detail-card {
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 50px 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border-top: 10px solid #800000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .match-meta {
+            font-weight: 800;
+            color: #666;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .score-board {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .team-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer; /* Tıklanabilir yaptık */
+            transition: transform 0.2s;
+        }
+        
+        .team-box:hover { transform: scale(1.05); }
+
+        .team-logo-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: white;
+            padding: 10px;
+            border: 5px solid #800000;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .team-name {
+            font-size: 28px;
+            font-weight: 900;
+            color: #1a1a1a;
+        }
+
+        .score-display {
+            font-size: 80px;
+            font-weight: 900;
+            color: #800000;
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            background: #eee6d6;
+            padding: 10px 30px;
+            border-radius: 20px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .mvp-section {
+            width: 100%;
+            margin-top: 50px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 30px;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 15px solid #ffd700;
+        }
+
+        .mvp-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .mvp-label {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            background: #800000;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .mvp-name {
+            font-size: 24px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer; /* Tıklanabilir yaptık */
+            text-decoration: underline rgba(255, 215, 0, 0);
+            transition: 0.3s;
+        }
+        
+        .mvp-name:hover { text-decoration: underline rgba(255, 215, 0, 1); color: white; }
+
+        .rating-box {
+            text-align: center;
+        }
+
+        .rating-circle {
+            font-size: 42px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+
+        .rating-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="lang-picker">
+        <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
+        <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
+        <button class="lang-btn" onclick="setLang('pt')" id="btn-pt"><img src="https://flagcdn.com/w40/pt.png"></button>
+    </div>
+    <a href="index.html" class="back-btn" id="txt-back">← LİG MERKEZİ</a>
+    <div id="txt-title" style="font-size: 24px; font-weight: 900; letter-spacing: 4px;">MAÇ DETAYLARI</div>
+</div>
+
+<div class="container">
+    <div class="match-detail-card">
+        <div class="match-meta" id="m-date">YÜKLENİYOR...</div>
+        
+        <div class="score-board">
+            <div class="team-box" id="box-team1">
+                <img id="logo1" src="" class="team-logo-large">
+                <div id="team1" class="team-name">---</div>
+            </div>
+            
+            <div id="m-score" class="score-display">0 - 0</div>
+            
+            <div class="team-box" id="box-team2">
+                <img id="logo2" src="" class="team-logo-large">
+                <div id="team2" class="team-name">---</div>
+            </div>
+        </div>
+
+        <div id="mvp-container" class="mvp-section" style="display: none;">
+            <div class="mvp-info">
+                <div>
+                    <span class="mvp-label" id="txt-mvp-label">MAÇIN ADAMI (MVP)</span><br>
+                    <span id="m-mvp" class="mvp-name">---</span>
+                </div>
+            </div>
+            <div class="rating-box">
+                <div id="m-rating" class="rating-circle">0.0</div>
+                <div class="rating-text" id="txt-rating-label">MAÇ PUANI</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    const firebaseConfig = { 
+        apiKey: "AIzaSyBEi_PQ2oYKW23Fu65M7MKPFKELRbqY6XQ", 
+        authDomain: "bobblekolik.firebaseapp.com", 
+        projectId: "bobblekolik", 
+        storageBucket: "bobblekolik.firebasestorage.app", 
+        messagingSenderId: "566665011913", 
+        appId: "1:566665011913:web:4e2570f7291f82fdb76318" 
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const translations = {
+        tr: { back: "← LİG MERKEZİ", title: "MAÇ DETAYLARI", mvp: "MAÇIN ADAMI (MVP)", score: "MAÇ PUANI", loading: "YÜKLENİYOR..." },
+        en: { back: "← LEAGUE CENTER", title: "MATCH DETAILS", mvp: "MAN OF THE MATCH (MVP)", score: "MATCH RATING", loading: "LOADING..." },
+        pt: { back: "← CENTRO DA LIGA", title: "DETALHES DO JOGO", mvp: "HOMEM DO JOGO (MVP)", score: "AVALIAÇÃO", loading: "CARREGANDO..." }
+    };
+
+    let currentLang = 'tr';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + lang).classList.add('active');
+        
+        const t = translations[lang];
+        document.getElementById('txt-back').innerText = t.back;
+        document.getElementById('txt-title').innerText = t.title;
+        document.getElementById('txt-mvp-label').innerText = t.mvp;
+        document.getElementById('txt-rating-label').innerText = t.score;
+        if(document.getElementById('m-date').innerText.includes("YÜKLENİYOR") || document.getElementById('m-date').innerText.includes("LOADING") || document.getElementById('m-date').innerText.includes("CARREGANDO")) {
+            document.getElementById('m-date').innerText = t.loading;
+        }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const matchId = urlParams.get('id');
+
+    if (matchId) {
+        const [t1, t2_date] = matchId.split("-vs-");
+        const t2 = t2_date.split("-")[0];
+        const datejav = t2_date.split("-")[1];
+
+        let logos = {};
+        db.collection("teams").get().then(snap => {
+            snap.forEach(doc => { logos[doc.data().name] = doc.data().logo; });
+            
+            db.collection("matches")
+                .where("team1", "==", t1)
+                .where("team2", "==", t2)
+                .where("datejav", "==", parseInt(datejav))
+                .get().then(mSnap => {
+                    if(!mSnap.empty) {
+                        const m = mSnap.docs[0].data();
+                        document.getElementById('m-date').innerText = "📅 " + (m.date || '---');
+                        document.getElementById('team1').innerText = m.team1;
+                        document.getElementById('team2').innerText = m.team2;
+                        document.getElementById('logo1').src = logos[m.team1] || '';
+                        document.getElementById('logo2').src = logos[m.team2] || '';
+                        document.getElementById('m-score').innerText = m.played ? `${m.score1} - ${m.score2}` : "VS";
+                        
+                        // Takım Yönlendirmeleri
+                        document.getElementById('box-team1').onclick = () => window.location.href = `takim.html?name=${encodeURIComponent(m.team1)}`;
+                        document.getElementById('box-team2').onclick = () => window.location.href = `takim.html?name=${encodeURIComponent(m.team2)}`;
+
+                        if(m.played && m.mvp) {
+                            document.getElementById('mvp-container').style.display = 'flex';
+                            document.getElementById('m-mvp').innerText = m.mvp;
+                            document.getElementById('m-rating').innerText = m.rating || '0.0';
+                            
+                            // MVP Oyuncu Yönlendirme
+                            document.getElementById('m-mvp').onclick = () => window.location.href = `oyuncu-detay.html?name=${encodeURIComponent(m.mvp)}`;
+                        }
+                    }
+                });
+        });
+    }
+
+    setLang('tr');
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Bobblekolik App</title>
+    <style>
+        :root {
+            /* Karanlık Tema (Varsayılan) */
+            --bg: #121212; --card: #1e1e1e; --text: #e8e1d1; --primary: #800000; --accent: #ffd700; --border: #333;
+            --ucl: #0052cc; --uel: #ff8800; --uecl: #00a859; --wpc-pink: #ff8da1;
+        }
+
+        [data-theme="light"] {
+            /* Aydınlık Tema */
+            --bg: #e8e1d1; --card: #f2ede1; --text: #3d3d3d; --primary: #800000; --accent: #ffd700; --border: #d7cdb7;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; transition: background 0.2s, color 0.2s; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
+
+        /* Üst Bar */
+        .app-header {
+            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            background: var(--primary); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 15px; z-index: 1000; border-bottom: 2px solid var(--accent);
+        }
+        .app-header h1 { font-size: 18px; font-weight: 900; color: var(--accent); letter-spacing: 2px; flex: 1; text-align: center; margin-left: 40px; }
+        
+        /* Tema ve Dil Butonları */
+        .header-btns { display: flex; gap: 8px; }
+        .circle-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--accent); background: var(--card); overflow: hidden; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+        .app-main { padding: 75px 12px 20px 12px; min-height: 100vh; }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Kartlar */
+        .m-card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* Tablo Ortalamaları */
+        .m-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+        .m-table th { color: var(--accent); padding: 10px 4px; border-bottom: 1px solid var(--border); }
+        .m-table td { padding: 12px 4px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .team-cell { display: flex; align-items: center; gap: 8px; text-align: left; font-weight: 700; }
+        .t-logo { width: 28px; height: 28px; border-radius: 50%; background: white; object-fit: cover; }
+
+        /* Maç Kartı */
+        .match-row { display: flex; align-items: center; justify-content: space-between; }
+        .m-team { flex: 1; display: flex; flex-direction: column; align-items: center; font-size: 11px; font-weight: 800; gap: 5px; }
+        .m-score { background: #000; color: var(--accent); padding: 8px 15px; border-radius: 8px; font-size: 20px; font-weight: 900; min-width: 70px; text-align: center; }
+
+        /* Alt Nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px;
+            background: var(--card); display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid var(--border); z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #777; font-size: 10px; font-weight: 700; text-decoration: none; border: none; background: none; }
+        .nav-item.active { color: var(--accent); }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
+
+        /* Renkli Çizgiler */
+        .row-ucl { border-left: 5px solid var(--ucl); }
+        .row-uel { border-left: 5px solid var(--uel); }
+        .row-uecl { border-left: 5px solid var(--uecl); }
+        .row-wpc { border-left: 5px solid var(--wpc-pink); }
+
+        /* İstatistik Butonları */
+        .stat-tabs { display: flex; gap: 5px; margin-bottom: 15px; }
+        .stat-tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-weight: 800; font-size: 12px; }
+        .stat-tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        .player-row { display: flex; align-items: center; gap: 12px; }
+        .p-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 2px solid var(--primary); }
+    </style>
+</head>
+<body>
+
+<header class="app-header">
+    <div class="header-btns">
+        <button class="circle-btn" onclick="toggleTheme()" id="theme-icon">🌙</button>
+        <button class="circle-btn" onclick="nextLang()" id="lang-btn">TR</button>
+    </div>
+    <h1>BOBBLEKOLİK</h1>
+</header>
+
+<main class="app-main">
+    <div id="p-haber" class="page active">
+        <div id="news-container"></div>
+    </div>
+
+    <div id="p-puan" class="page">
+        <div class="m-card" style="padding:0; overflow:hidden;">
+            <table class="m-table">
+                <thead><tr id="th-lig"></tr></thead>
+                <tbody id="lig-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="p-wpc" class="page">
+        <div class="m-card" style="padding:0; overflow:hidden; margin-bottom:20px;">
+            <div style="background:var(--primary); color:white; padding:10px; text-align:center; font-weight:900;" id="txt-ga">A GRUBU</div>
+            <table class="m-table"><thead><tr id="th-wpc1"></tr></thead><tbody id="ga-body"></tbody></table>
+        </div>
+        <div class="m-card" style="padding:0; overflow:hidden;">
+            <div style="background:var(--primary); color:white; padding:10px; text-align:center; font-weight:900;" id="txt-gb">B GRUBU</div>
+            <table class="m-table"><thead><tr id="th-wpc2"></tr></thead><tbody id="gb-body"></tbody></table>
+        </div>
+    </div>
+
+    <div id="p-mac" class="page">
+        <div id="matches-container"></div>
+    </div>
+
+    <div id="p-stat" class="page">
+        <div class="stat-tabs">
+            <button class="stat-tab-btn active" onclick="filterStats('goals', this)" id="btn-gol">GOL</button>
+            <button class="stat-tab-btn" onclick="filterStats('asistsay', this)" id="btn-asist">ASİST</button>
+            <button class="stat-tab-btn" onclick="filterStats('ratingoy', this)" id="btn-rat">RAT</button>
+        </div>
+        <div id="stat-list-container"></div>
+    </div>
+</main>
+
+<nav class="bottom-nav">
+    <button class="nav-item active" onclick="appNav('p-haber', this)"><span class="nav-icon">📰</span><span id="nav-news">Haber</span></button>
+    <button class="nav-item" onclick="appNav('p-puan', this)"><span class="nav-icon">🏆</span><span id="nav-puan">Puan</span></button>
+    <button class="nav-item" onclick="appNav('p-wpc', this)"><span class="nav-icon">🌍</span><span>WPC</span></button>
+    <button class="nav-item" onclick="appNav('p-mac', this)"><span class="nav-icon">⚽</span><span id="nav-mac">Maçlar</span></button>
+    <button class="nav-item" onclick="appNav('p-stat', this)"><span class="nav-icon">📊</span><span id="nav-stat">İstatistik</span></button>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    // Firebase
+    const firebaseConfig = { apiKey: "AIzaSyBEi_PQ2oYKW23Fu65M7MKPFKELRbqY6XQ", authDomain: "bobblekolik.firebaseapp.com", projectId: "bobblekolik", storageBucket: "bobblekolik.firebasestorage.app", messagingSenderId: "566665011913", appId: "1:566665011913:web:4e2570f7291f82fdb76318" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let currentLang = 'tr';
+    const langs = ['tr', 'en', 'pt'];
+    const translations = {
+        tr: { news: "Haber", puan: "Puan", mac: "Maçlar", stat: "İst.", ga: "A GRUBU", gb: "B GRUBU", takim: "TAKIM", p: "P", av: "AV" },
+        en: { news: "News", puan: "League", mac: "Matches", stat: "Stats", ga: "GROUP A", gb: "GROUP B", takim: "TEAM", p: "P", av: "GD" },
+        pt: { news: "Notícias", puan: "Liga", mac: "Jogos", stat: "Est.", ga: "GRUPO A", gb: "GRUPO B", takim: "TIME", p: "P", av: "SG" }
+    };
+
+    let teamLogos = {}; 
+    let allPlayers = [];
+
+    // TEMA DEĞİŞTİRME
+    function toggleTheme() {
+        const body = document.documentElement;
+        const current = body.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        body.setAttribute('data-theme', next);
+        document.getElementById('theme-icon').innerText = next === 'light' ? '☀️' : '🌙';
+    }
+
+    // DİL DEĞİŞTİRME
+    function nextLang() {
+        let idx = langs.indexOf(currentLang);
+        currentLang = langs[(idx + 1) % langs.length];
+        document.getElementById('lang-btn').innerText = currentLang.toUpperCase();
+        updateUI();
+    }
+
+    function updateUI() {
+        const t = translations[currentLang];
+        document.getElementById('nav-news').innerText = t.news;
+        document.getElementById('nav-puan').innerText = t.puan;
+        document.getElementById('nav-mac').innerText = t.mac;
+        document.getElementById('nav-stat').innerText = t.stat;
+        document.getElementById('txt-ga').innerText = t.ga;
+        document.getElementById('txt-gb').innerText = t.gb;
+        
+        const headHtml = `<th>#</th><th style="text-align:left">${t.takim}</th><th>O</th><th>${t.av}</th><th>${t.p}</th>`;
+        document.getElementById('th-lig').innerHTML = headHtml;
+        document.getElementById('th-wpc1').innerHTML = headHtml;
+        document.getElementById('th-wpc2').innerHTML = headHtml;
+        // Yeniden render
+        fetchData();
+    }
+
+    function appNav(pageId, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        btn.classList.add('active');
+        if(pageId === 'p-stat') filterStats('goals', document.getElementById('btn-gol'));
+    }
+
+    function fetchData() {
+        // Logolar ve Takımlar
+        db.collection("teams").onSnapshot(snap => {
+            let teams = [];
+            snap.forEach(doc => {
+                const d = doc.data();
+                teamLogos[d.name] = d.logo;
+                const av = (Number(d["atilan gol"])||0) - (Number(d["yenilen gol"])||0);
+                teams.push({...d, av, pts: Number(d.points)||0});
+            });
+
+            // LİG TABLOSU
+            const ligSorted = [...teams].sort((a,b) => b.pts - a.pts || b.av - a.av);
+            document.getElementById('lig-body').innerHTML = ligSorted.map((t, i) => {
+                let rowCl = (i < 4) ? "row-ucl" : (i < 8 ? "row-uel" : (i >= teams.length - 4 ? "row-uecl" : ""));
+                return `<tr class="${rowCl}" onclick="location.href='takim.html?name=${encodeURIComponent(t.name)}'">
+                    <td>${i+1}</td>
+                    <td><div class="team-cell"><img src="${t.logo}" class="t-logo"><span>${t.name}</span></div></td>
+                    <td>${t.played||0}</td><td>${t.av}</td><td style="color:var(--accent); font-weight:900;">${t.pts}</td>
+                </tr>`;
+            }).join('');
+
+            // WPC GRUPLARI
+            ['A', 'B'].forEach(g => {
+                let gTeams = teams.filter(t => t.kgrup === g).map(t => ({...t, gp: (Number(t.kgpuan)*3)+(Number(t.kgb)*1), gav: (Number(t.kgatilan)||0)-(Number(t.kgyenilen)||0)})).sort((a,b) => b.gp - a.gp || b.gav - a.gav);
+                document.getElementById(`g${g.toLowerCase()}-body`).innerHTML = gTeams.map((t, i) => `
+                    <tr class="${i<4?'row-wpc':''}" onclick="location.href='takim.html?name=${encodeURIComponent(t.name)}'">
+                        <td>${i+1}</td>
+                        <td><div class="team-cell"><img src="${t.logo}" class="t-logo"><span>${t.name}</span></div></td>
+                        <td>${(Number(t.kgpuan)||0)+(Number(t.kgb)||0)+(Number(t.kgl)||0)}</td><td>${t.gav}</td><td style="color:var(--accent); font-weight:900;">${t.gp}</td>
+                    </tr>`).join('');
+            });
+        });
+
+        // Haberler
+        db.collection("haberler").orderBy("tarihjav", "desc").onSnapshot(snap => {
+            document.getElementById('news-container').innerHTML = '';
+            snap.forEach(doc => {
+                const h = doc.data();
+                document.getElementById('news-container').innerHTML += `
+                <div class="m-card">
+                    ${h.haberfoto ? `<img src="${h.haberfoto}" style="width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
+                    <div style="font-weight:900; font-size:16px; margin-bottom:5px;">${h.haberad.toUpperCase()}</div>
+                    <div style="font-size:13px; opacity:0.8;">${h.haberdetay}</div>
+                </div>`;
+            });
+        });
+
+        // Maçlar
+        db.collection("matches").orderBy("datejav", "desc").onSnapshot(snap => {
+            const cont = document.getElementById('matches-container');
+            cont.innerHTML = '';
+            snap.forEach(doc => {
+                const m = doc.data();
+                const matchId = m.team1 + "-vs-" + m.team2 + "-" + m.datejav;
+                cont.innerHTML += `
+                <div class="m-card" onclick="location.href='mac-detay.html?id=${encodeURIComponent(matchId)}'">
+                    <div style="text-align:center; font-size:10px; margin-bottom:10px; font-weight:700;">📅 ${m.date || ''}</div>
+                    <div class="match-row">
+                        <div class="m-team"><img src="${teamLogos[m.team1]||''}" class="t-logo"><span>${m.team1}</span></div>
+                        <div class="m-score">${m.played ? m.score1+' - '+m.score2 : 'VS'}</div>
+                        <div class="m-team"><img src="${teamLogos[m.team2]||''}" class="t-logo"><span>${m.team2}</span></div>
+                    </div>
+                </div>`;
+            });
+        });
+
+        // Oyuncuları Al (İstatistik için)
+        db.collection("players").get().then(s => { allPlayers = []; s.forEach(d => allPlayers.push(d.data())); });
+    }
+
+    function filterStats(type, btn) {
+        document.querySelectorAll('.stat-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        let sorted = [...allPlayers].sort((a,b) => (Number(b[type])||0) - (Number(a[type])||0)).slice(0, 20);
+        document.getElementById('stat-list-container').innerHTML = sorted.map((p, i) => `
+            <div class="m-card player-row" onclick="location.href='oyuncu-detay.html?name=${encodeURIComponent(p.pname)}'">
+                <div style="font-weight:900; width:20px;">${i+1}</div>
+                <img src="${p.foto}" class="p-img">
+                <div style="flex:1">
+                    <div style="font-weight:800; font-size:14px;">${p.pname.toUpperCase()}</div>
+                    <div style="font-size:11px; opacity:0.7;">${p.pteam}</div>
+                </div>
+                <div style="font-size:20px; font-weight:900; color:var(--accent)">${Number(p[type])||0}</div>
+            </div>`).join('');
+    }
+
+    updateUI();
+    fetchData();
+</script>
+</body>
+</html>
