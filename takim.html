@@ -7,6 +7,7 @@
     <style>
         /* TEMA DEĞİŞKENLERİ */
         :root {
+            /* AYDINLIK TEMA */
             --bg: #f8f9fa; --card: #ffffff; --text: #2d3436; 
             --primary: #800000; --accent: #ffd700; --border: #e0e0e0;
             --sub-text: #636e72; --header-text: #ffffff;
@@ -14,12 +15,13 @@
         }
 
         [data-theme="dark"] {
-            --bg: #121212; --card: #1e1e1e; --text: #e8e1d1;
-            --border: #333; --sub-text: #a0a0a0;
+            /* KARANLIK TEMA */
+            --bg: #0f0f0f; --card: #1a1a1a; --text: #e8e1d1;
+            --border: #2a2a2a; --sub-text: #a0a0a0;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 40px; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 40px; }
 
         /* Üst Navigasyon */
         .back-nav { 
@@ -47,76 +49,77 @@
             border: 4px solid var(--accent); object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
             margin-bottom: 12px;
         }
-        .team-title { font-size: 22px; font-weight: 900; color: var(--accent); text-transform: uppercase; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+        .team-title { font-size: 24px; font-weight: 900; color: var(--accent); text-transform: uppercase; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
 
         /* Meta Container */
-        .meta-container { display: flex; gap: 10px; padding: 0 15px; margin-top: -25px; margin-bottom: 20px; }
+        .meta-container { display: flex; gap: 10px; padding: 0 15px; margin-top: -25px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto; }
         .meta-box { 
-            flex: 1; background: var(--card); border-radius: 15px; padding: 12px; 
-            text-align: center; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            flex: 1; background: var(--card); border-radius: 18px; padding: 12px; 
+            text-align: center; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .meta-label { font-size: 9px; font-weight: 900; color: var(--primary); display: block; margin-bottom: 6px; letter-spacing: 1px; }
-        .meta-img { width: 100%; height: 65px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 6px; background: #eee; }
+        .meta-label { font-size: 10px; font-weight: 900; color: var(--primary); display: block; margin-bottom: 8px; letter-spacing: 1px; }
+        .meta-img { width: 100%; height: 70px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; background: #222; }
         .meta-name { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text); }
 
-        .container { padding: 0 15px; }
+        .container { padding: 0 15px; max-width: 600px; margin: 0 auto; }
         .section-title { 
             font-size: 15px; font-weight: 900; color: var(--primary); 
             margin: 25px 0 15px 0; display: flex; align-items: center; gap: 10px; 
         }
-        .section-title::after { content: ""; height: 2px; background: var(--border); flex: 1; }
+        .section-title::after { content: ""; height: 2px; background: var(--border); flex: 1; opacity: 0.5; }
 
-        /* Performans Grid */
-        .performance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        /* Performans Grid - MANTIKSAL SIRALAMA */
+        .performance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
         .perf-card { 
-            background: var(--card); padding: 12px; border-radius: 12px; 
+            background: var(--card); padding: 15px 10px; border-radius: 15px; 
             text-align: center; border: 1px solid var(--border); 
         }
         .perf-value { font-size: 22px; font-weight: 900; color: var(--text); display: block; }
-        .perf-label { font-size: 10px; font-weight: 700; color: var(--sub-text); text-transform: uppercase; }
-        .border-win { border-left: 4px solid #2ecc71; }
-        .border-loss { border-left: 4px solid #e74c3c; }
-        .border-draw { border-left: 4px solid #f1c40f; }
+        .perf-label { font-size: 9px; font-weight: 800; color: var(--sub-text); text-transform: uppercase; }
+        
+        .border-win { border-bottom: 3px solid #2ecc71; }
+        .border-draw { border-bottom: 3px solid #f1c40f; }
+        .border-loss { border-bottom: 3px solid #e74c3c; }
+        .border-av { border-bottom: 3px solid var(--accent); }
 
         /* Oyuncu Kartı */
         .player-card { 
-            background: var(--card); padding: 10px 15px; border-radius: 15px; 
+            background: var(--card); padding: 12px 15px; border-radius: 18px; 
             margin-bottom: 10px; display: flex; align-items: center; border: 1px solid var(--border);
         }
-        .player-img { width: 45px; height: 45px; border-radius: 10px; margin-right: 12px; object-fit: cover; border: 2px solid var(--primary); }
+        .player-img { width: 48px; height: 48px; border-radius: 12px; margin-right: 15px; object-fit: cover; border: 2px solid var(--primary); }
         .player-info b { font-size: 14px; color: var(--text); text-transform: uppercase; display: block; }
         .role-badge { 
-            margin-left: auto; padding: 4px 8px; border-radius: 6px; 
+            margin-left: auto; padding: 4px 10px; border-radius: 8px; 
             font-size: 9px; font-weight: 900; text-transform: uppercase;
         }
-        .role-captain { background: var(--accent); color: #000; }
+        .role-captain { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
         .role-player { background: var(--bg); color: var(--sub-text); border: 1px solid var(--border); }
 
         /* Maç Kartları */
         .match-card { 
-            background: var(--card); padding: 12px; border-radius: 15px; 
-            margin-bottom: 10px; border: 1px solid var(--border); 
+            background: var(--card); padding: 15px; border-radius: 18px; 
+            margin-bottom: 12px; border: 1px solid var(--border); 
         }
-        .match-date-tag { font-size: 10px; font-weight: 700; color: var(--sub-text); display: block; text-align: center; margin-bottom: 8px; }
+        .match-date-tag { font-size: 10px; font-weight: 800; color: var(--sub-text); display: block; text-align: center; margin-bottom: 10px; }
         .match-content { display: flex; align-items: center; justify-content: space-between; }
-        .match-team { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; text-align: center; }
-        .match-logo-small { width: 32px; height: 32px; border-radius: 50%; background: white; border: 1px solid var(--border); }
-        .match-score { background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-size: 16px; font-weight: 900; min-width: 55px; text-align: center; }
+        .match-team { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; text-align: center; color: var(--text); }
+        .match-logo-small { width: 38px; height: 38px; border-radius: 50%; background: white; border: 1px solid var(--border); object-fit: contain; }
+        .match-score { background: var(--primary); color: white; padding: 6px 14px; border-radius: 10px; font-size: 18px; font-weight: 900; min-width: 65px; text-align: center; }
 
-        .insta-footer { text-align: center; margin-top: 30px; }
+        .insta-footer { text-align: center; margin-top: 30px; margin-bottom: 20px; }
         .insta-link { 
             display: inline-flex; align-items: center; gap: 8px; 
             text-decoration: none; color: white; background: linear-gradient(45deg, #f09433, #e74371, #962fbf); 
-            padding: 10px 20px; border-radius: 25px; font-weight: 800; font-size: 13px;
+            padding: 12px 25px; border-radius: 30px; font-weight: 800; font-size: 13px;
+            box-shadow: 0 5px 15px rgba(231, 67, 113, 0.3);
         }
     </style>
 </head>
-<body data-theme="light">
-
-<nav class="back-nav">
+<body data-theme="dark"> <nav class="back-nav">
     <a href="index.html" class="back-btn" id="txt-home">⬅ GERİ</a>
     <div class="nav-right">
-        <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">🌙</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">☀️</button>
         <div class="lang-picker">
             <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
             <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
@@ -145,13 +148,16 @@
 
 <div class="container">
     <div class="section-title" id="txt-stats">PERFORMANS</div>
+    
     <div class="performance-grid">
         <div class="perf-card border-win"><span class="perf-value" id="p-wins">0</span><span class="perf-label" id="txt-w">Galibiyet</span></div>
         <div class="perf-card border-draw"><span class="perf-value" id="p-draws">0</span><span class="perf-label" id="txt-d">Beraberlik</span></div>
         <div class="perf-card border-loss"><span class="perf-value" id="p-losses">0</span><span class="perf-label" id="txt-l">Mağlubiyet</span></div>
-        <div class="perf-card"><span class="perf-value" id="p-av">0</span><span class="perf-label" id="txt-av">Averaj</span></div>
-        <div class="perf-card" style="border-bottom: 3px solid var(--plus)"><span class="perf-value" id="p-goals-for">0</span><span class="perf-label" id="txt-gf">Atılan Gol</span></div>
-        <div class="perf-card" style="border-bottom: 3px solid var(--minus)"><span class="perf-value" id="p-goals-against">0</span><span class="perf-label" id="txt-ga">Yenilen Gol</span></div>
+    </div>
+    <div class="performance-grid">
+        <div class="perf-card"><span class="perf-value" id="p-goals-for" style="color: #2ecc71;">0</span><span class="perf-label" id="txt-gf">Atılan</span></div>
+        <div class="perf-card"><span class="perf-value" id="p-goals-against" style="color: #e74c3c;">0</span><span class="perf-label" id="txt-ga">Yenilen</span></div>
+        <div class="perf-card border-av"><span class="perf-value" id="p-av">0</span><span class="perf-label" id="txt-av">Averaj</span></div>
     </div>
 
     <div class="section-title" id="txt-squad">KADRO</div>
@@ -165,7 +171,7 @@
 
     <div id="insta-area" class="insta-footer" style="display:none;">
         <a id="insta-url" href="#" target="_blank" class="insta-link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="18">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="18" style="filter: brightness(0) invert(1);">
             <span id="insta-team-name">INSTAGRAM</span>
         </a>
     </div>
@@ -179,8 +185,8 @@
     const db = firebase.firestore();
 
     const translations = {
-        tr: { home: "⬅ GERİ", squad: "TAKIM KADROSU", stats: "PERFORMANS", last: "SON MAÇLAR", next: "GELECEK MAÇLAR", w: "Galibiyet", d: "Beraberlik", l: "Mağlubiyet", gf: "Atılan Gol", ga: "Yenilen Gol", av: "Averaj", goal: "GOL", wait: "TARİH BEKLENİYOR", captain: "KAPTAN", player: "OYUNCU", country: "ÜLKE", animal: "MASKOT" },
-        en: { home: "⬅ BACK", squad: "SQUAD", stats: "PERFORMANCE", last: "RECENT", next: "UPCOMING", w: "Wins", d: "Draws", l: "Losses", gf: "Goals For", ga: "Goals Against", av: "GD", goal: "GOALS", wait: "PENDING", captain: "CAPTAIN", player: "PLAYER", country: "COUNTRY", animal: "MASCOT" },
+        tr: { home: "⬅ GERİ", squad: "TAKIM KADROSU", stats: "PERFORMANS", last: "SON MAÇLAR", next: "GELECEK MAÇLAR", w: "Galibiyet", d: "Beraberlik", l: "Mağlubiyet", gf: "Atılan", ga: "Yenilen", av: "Averaj", goal: "GOL", wait: "TARİH BEKLENİYOR", captain: "KAPTAN", player: "OYUNCU", country: "ÜLKE", animal: "MASKOT" },
+        en: { home: "⬅ BACK", squad: "SQUAD", stats: "PERFORMANCE", last: "RECENT", next: "UPCOMING", w: "Wins", d: "Draws", l: "Losses", gf: "Scored", ga: "Against", av: "GD", goal: "GOALS", wait: "PENDING", captain: "CAPTAIN", player: "PLAYER", country: "COUNTRY", animal: "MASCOT" },
         pt: { home: "⬅ VOLTAR", squad: "ELENCO", stats: "DESEMPENHO", last: "ÚLTIMOS", next: "PRÓXIMOS", w: "Vitórias", d: "Empates", l: "Derrotas", gf: "Gols Pró", ga: "Gols Contra", av: "Saldo", goal: "GOLS", wait: "PENDENTE", captain: "CAPITÃO", player: "JOGADOR", country: "PAÍS", animal: "MASCOTE" }
     };
 
@@ -189,6 +195,7 @@
     const teamName = urlParams.get('name');
     let allTeamLogos = {};
 
+    // TEMA KONTROLÜ
     function toggleTheme() {
         const body = document.body;
         const icon = document.getElementById('theme-icon');
@@ -203,10 +210,10 @@
         }
     }
 
-    if(localStorage.getItem('theme') === 'dark') {
-        document.body.setAttribute('data-theme', 'dark');
-        document.getElementById('theme-icon').innerText = '☀️';
-    }
+    // İlk açılışta karanlık mı aydınlık mı?
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+    document.getElementById('theme-icon').innerText = savedTheme === 'dark' ? '☀️' : '🌙';
 
     function setLang(lang) {
         currentLang = lang;
@@ -214,7 +221,6 @@
         document.getElementById('btn-' + lang).classList.add('active');
         const t = translations[lang];
         
-        // Çevirileri Uygula
         document.getElementById('txt-home').innerText = t.home;
         document.getElementById('txt-squad').innerText = t.squad;
         document.getElementById('txt-stats').innerText = t.stats;
@@ -254,18 +260,16 @@
                 document.getElementById('p-goals-against').innerText = ga;
                 document.getElementById('p-av').innerText = gf - ga;
 
-                const ulkeAdi = d.ülke;
-                document.getElementById('country-name').innerText = ulkeAdi || '-';
-                if (ulkeAdi) {
-                    db.collection("ülkeler").where("ülkead", "==", ulkeAdi).get().then(uSnap => {
+                document.getElementById('country-name').innerText = d.ülke || '-';
+                if (d.ülke) {
+                    db.collection("ülkeler").where("ülkead", "==", d.ülke).get().then(uSnap => {
                         if(!uSnap.empty) document.getElementById('flag-large').src = uSnap.docs[0].data().ülkefoto;
                     });
                 }
 
-                const hayvanAdi = d.hayvan;
-                document.getElementById('animal-name').innerText = hayvanAdi || '-';
-                if (hayvanAdi) {
-                    db.collection("hayvanlar").where("hayvanad", "==", hayvanAdi).get().then(hSnap => {
+                document.getElementById('animal-name').innerText = d.hayvan || '-';
+                if (d.hayvan) {
+                    db.collection("hayvanlar").where("hayvanad", "==", d.hayvan).get().then(hSnap => {
                         if(!hSnap.empty) document.getElementById('animal-large').src = hSnap.docs[0].data().hayvanfoto;
                     });
                 }
@@ -278,7 +282,6 @@
             });
         });
 
-        // Oyuncular
         db.collection("players").where("pteam", "==", teamName).onSnapshot(snap => {
             const list = document.getElementById('player-list'); list.innerHTML = '';
             let players = []; snap.forEach(doc => players.push(doc.data()));
@@ -298,12 +301,10 @@
             });
         });
 
-        // Maçlar
         db.collection("matches").onSnapshot(snap => {
             const playedDiv = document.getElementById('played-matches'); playedDiv.innerHTML = '';
             const upcomingDiv = document.getElementById('upcoming-matches'); upcomingDiv.innerHTML = '';
             let matches = []; snap.forEach(doc => matches.push(doc.data()));
-
             matches.filter(m => (m.team1 === teamName || m.team2 === teamName))
                    .forEach(m => {
                         const isT1 = m.team1 === teamName;
