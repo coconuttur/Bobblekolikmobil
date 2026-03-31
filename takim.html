@@ -5,14 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Takım Detayı | Bobblekolik</title>
     <style>
+        /* TEMA DEĞİŞKENLERİ */
         :root {
-            /* Ana uygulama temasıyla uyumlu */
-            --bg: #121212; --card: #1e1e1e; --text: #e8e1d1; --primary: #800000; --accent: #ffd700; --border: #333;
+            --bg: #f8f9fa; --card: #ffffff; --text: #2d3436; 
+            --primary: #800000; --accent: #ffd700; --border: #e0e0e0;
+            --sub-text: #636e72; --header-text: #ffffff;
             --plus: #2ecc71; --minus: #e74c3c;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 40px; line-height: 1.4; }
+        [data-theme="dark"] {
+            --bg: #121212; --card: #1e1e1e; --text: #e8e1d1;
+            --border: #333; --sub-text: #a0a0a0;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 40px; }
 
         /* Üst Navigasyon */
         .back-nav { 
@@ -22,94 +29,99 @@
         }
         .back-btn { color: white; text-decoration: none; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 5px; }
         
-        .lang-picker { display: flex; gap: 8px; }
-        .lang-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--accent); overflow: hidden; background: #fff; cursor: pointer; padding: 0; opacity: 0.6; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .theme-toggle { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 10px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        
+        .lang-picker { display: flex; gap: 5px; }
+        .lang-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--accent); overflow: hidden; background: #fff; cursor: pointer; padding: 0; opacity: 0.5; }
         .lang-btn.active { opacity: 1; border-width: 2px; transform: scale(1.1); }
         .lang-btn img { width: 100%; height: 100%; object-fit: cover; }
 
         /* Header Area */
         .team-header { 
-            background: linear-gradient(to bottom, var(--primary), #121212); 
-            padding: 30px 20px; text-align: center; 
+            background: linear-gradient(to bottom, var(--primary), var(--bg)); 
+            padding: 30px 20px 40px 20px; text-align: center; 
         }
         .team-logo-large { 
-            width: 110px; height: 110px; border-radius: 50%; background: white; 
-            border: 4px solid var(--accent); object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-            margin-bottom: 15px;
+            width: 100px; height: 100px; border-radius: 50%; background: white; 
+            border: 4px solid var(--accent); object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin-bottom: 12px;
         }
-        .team-title { font-size: 24px; font-weight: 900; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; }
+        .team-title { font-size: 22px; font-weight: 900; color: var(--accent); text-transform: uppercase; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
 
-        /* Meta Info (Ülke & Maskot) - Yan Yana Mobil Düzen */
-        .meta-container { display: flex; gap: 10px; padding: 0 15px; margin-top: -20px; margin-bottom: 25px; }
+        /* Meta Container */
+        .meta-container { display: flex; gap: 10px; padding: 0 15px; margin-top: -25px; margin-bottom: 20px; }
         .meta-box { 
             flex: 1; background: var(--card); border-radius: 15px; padding: 12px; 
-            text-align: center; border: 1px solid var(--border); box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        .meta-label { font-size: 9px; font-weight: 900; color: var(--accent); opacity: 0.8; display: block; margin-bottom: 8px; }
-        .meta-img { width: 100%; height: 70px; object-fit: cover; border-radius: 8px; background: #000; margin-bottom: 8px; }
-        .meta-name { font-size: 12px; font-weight: 800; color: #fff; text-transform: uppercase; }
+        .meta-label { font-size: 9px; font-weight: 900; color: var(--primary); display: block; margin-bottom: 6px; letter-spacing: 1px; }
+        .meta-img { width: 100%; height: 65px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 6px; background: #eee; }
+        .meta-name { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text); }
 
         .container { padding: 0 15px; }
         .section-title { 
-            font-size: 16px; font-weight: 900; color: var(--accent); 
+            font-size: 15px; font-weight: 900; color: var(--primary); 
             margin: 25px 0 15px 0; display: flex; align-items: center; gap: 10px; 
         }
         .section-title::after { content: ""; height: 2px; background: var(--border); flex: 1; }
 
         /* Performans Grid */
-        .performance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        .performance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .perf-card { 
-            background: var(--card); padding: 12px 5px; border-radius: 12px; 
+            background: var(--card); padding: 12px; border-radius: 12px; 
             text-align: center; border: 1px solid var(--border); 
         }
-        .perf-value { font-size: 20px; font-weight: 900; color: white; display: block; }
-        .perf-label { font-size: 9px; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
-        .perf-goals-for { border-bottom: 3px solid var(--plus); }
-        .perf-goals-against { border-bottom: 3px solid var(--minus); }
+        .perf-value { font-size: 22px; font-weight: 900; color: var(--text); display: block; }
+        .perf-label { font-size: 10px; font-weight: 700; color: var(--sub-text); text-transform: uppercase; }
+        .border-win { border-left: 4px solid #2ecc71; }
+        .border-loss { border-left: 4px solid #e74c3c; }
+        .border-draw { border-left: 4px solid #f1c40f; }
 
-        /* Oyuncu Listesi */
+        /* Oyuncu Kartı */
         .player-card { 
             background: var(--card); padding: 10px 15px; border-radius: 15px; 
-            margin-bottom: 10px; display: flex; align-items: center; 
-            border: 1px solid var(--border);
+            margin-bottom: 10px; display: flex; align-items: center; border: 1px solid var(--border);
         }
-        .player-img { width: 50px; height: 50px; border-radius: 10px; margin-right: 15px; object-fit: cover; border: 2px solid var(--primary); }
-        .player-info b { font-size: 15px; color: white; text-transform: uppercase; display: block; }
+        .player-img { width: 45px; height: 45px; border-radius: 10px; margin-right: 12px; object-fit: cover; border: 2px solid var(--primary); }
+        .player-info b { font-size: 14px; color: var(--text); text-transform: uppercase; display: block; }
         .role-badge { 
-            margin-left: auto; padding: 5px 10px; border-radius: 8px; 
-            font-size: 10px; font-weight: 900; text-transform: uppercase;
+            margin-left: auto; padding: 4px 8px; border-radius: 6px; 
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
         }
         .role-captain { background: var(--accent); color: #000; }
-        .role-player { background: #333; color: #aaa; }
+        .role-player { background: var(--bg); color: var(--sub-text); border: 1px solid var(--border); }
 
         /* Maç Kartları */
         .match-card { 
-            background: var(--card); padding: 15px; border-radius: 15px; 
-            margin-bottom: 12px; border: 1px solid var(--border); 
-            border-left: 5px solid var(--primary);
+            background: var(--card); padding: 12px; border-radius: 15px; 
+            margin-bottom: 10px; border: 1px solid var(--border); 
         }
-        .match-date-tag { font-size: 10px; font-weight: 700; opacity: 0.5; display: block; text-align: center; margin-bottom: 10px; }
-        .match-content { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .match-team { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; text-align: center; }
-        .match-logo-small { width: 35px; height: 35px; border-radius: 50%; background: white; object-fit: cover; }
-        .match-score { background: #000; color: var(--accent); padding: 6px 12px; border-radius: 8px; font-size: 18px; font-weight: 900; min-width: 55px; text-align: center; }
+        .match-date-tag { font-size: 10px; font-weight: 700; color: var(--sub-text); display: block; text-align: center; margin-bottom: 8px; }
+        .match-content { display: flex; align-items: center; justify-content: space-between; }
+        .match-team { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; text-align: center; }
+        .match-logo-small { width: 32px; height: 32px; border-radius: 50%; background: white; border: 1px solid var(--border); }
+        .match-score { background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-size: 16px; font-weight: 900; min-width: 55px; text-align: center; }
 
-        .insta-footer { text-align: center; margin: 30px 0; }
+        .insta-footer { text-align: center; margin-top: 30px; }
         .insta-link { 
             display: inline-flex; align-items: center; gap: 8px; 
             text-decoration: none; color: white; background: linear-gradient(45deg, #f09433, #e74371, #962fbf); 
-            padding: 12px 25px; border-radius: 30px; font-weight: 800; font-size: 14px;
+            padding: 10px 20px; border-radius: 25px; font-weight: 800; font-size: 13px;
         }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
 <nav class="back-nav">
     <a href="index.html" class="back-btn" id="txt-home">⬅ GERİ</a>
-    <div class="lang-picker">
-        <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
-        <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
-        <button class="lang-btn" onclick="setLang('pt')" id="btn-pt"><img src="https://flagcdn.com/w40/pt.png"></button>
+    <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon">🌙</button>
+        <div class="lang-picker">
+            <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
+            <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
+            <button class="lang-btn" onclick="setLang('pt')" id="btn-pt"><img src="https://flagcdn.com/w40/pt.png"></button>
+        </div>
     </div>
 </nav>
 
@@ -132,14 +144,14 @@
 </div>
 
 <div class="container">
-    <div class="section-title" id="txt-stats">İSTATİSTİKLER</div>
+    <div class="section-title" id="txt-stats">PERFORMANS</div>
     <div class="performance-grid">
-        <div class="perf-card"><span class="perf-value" id="p-wins">0</span><span class="perf-label" id="txt-w">G</span></div>
-        <div class="perf-card"><span class="perf-value" id="p-draws">0</span><span class="perf-label" id="txt-d">B</span></div>
-        <div class="perf-card"><span class="perf-value" id="p-losses">0</span><span class="perf-label" id="txt-l">M</span></div>
-        <div class="perf-card perf-goals-for"><span class="perf-value" id="p-goals-for">0</span><span class="perf-label" id="txt-gf">GOL+</span></div>
-        <div class="perf-card perf-goals-against"><span class="perf-value" id="p-goals-against">0</span><span class="perf-label" id="txt-ga">GOL-</span></div>
-        <div class="perf-card"><span class="perf-value" id="p-av">0</span><span class="perf-label">AV</span></div>
+        <div class="perf-card border-win"><span class="perf-value" id="p-wins">0</span><span class="perf-label" id="txt-w">Galibiyet</span></div>
+        <div class="perf-card border-draw"><span class="perf-value" id="p-draws">0</span><span class="perf-label" id="txt-d">Beraberlik</span></div>
+        <div class="perf-card border-loss"><span class="perf-value" id="p-losses">0</span><span class="perf-label" id="txt-l">Mağlubiyet</span></div>
+        <div class="perf-card"><span class="perf-value" id="p-av">0</span><span class="perf-label" id="txt-av">Averaj</span></div>
+        <div class="perf-card" style="border-bottom: 3px solid var(--plus)"><span class="perf-value" id="p-goals-for">0</span><span class="perf-label" id="txt-gf">Atılan Gol</span></div>
+        <div class="perf-card" style="border-bottom: 3px solid var(--minus)"><span class="perf-value" id="p-goals-against">0</span><span class="perf-label" id="txt-ga">Yenilen Gol</span></div>
     </div>
 
     <div class="section-title" id="txt-squad">KADRO</div>
@@ -153,7 +165,7 @@
 
     <div id="insta-area" class="insta-footer" style="display:none;">
         <a id="insta-url" href="#" target="_blank" class="insta-link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="20">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="18">
             <span id="insta-team-name">INSTAGRAM</span>
         </a>
     </div>
@@ -167,9 +179,9 @@
     const db = firebase.firestore();
 
     const translations = {
-        tr: { home: "⬅ GERİ", squad: "KADRO", stats: "İSTATİSTİKLER", last: "SON MAÇLAR", next: "GELECEK MAÇLAR", w: "G", d: "B", l: "M", gf: "GOL+", ga: "GOL-", goal: "GOL", wait: "BEKLENİYOR", captain: "KAPTAN", player: "OYUNCU", country: "ÜLKE", animal: "MASKOT" },
-        en: { home: "⬅ BACK", squad: "SQUAD", stats: "STATS", last: "RECENT", next: "UPCOMING", w: "W", d: "D", l: "L", gf: "GF", ga: "GA", goal: "GOALS", wait: "PENDING", captain: "CAPTAIN", player: "PLAYER", country: "COUNTRY", animal: "MASCOT" },
-        pt: { home: "⬅ VOLTAR", squad: "ELENCO", stats: "ESTATÍSTICAS", last: "ÚLTIMOS", next: "PRÓXIMOS", w: "V", d: "E", l: "D", gf: "GP", ga: "GC", goal: "GOLS", wait: "PENDENTE", captain: "CAPITÃO", player: "JOGADOR", country: "PAÍS", animal: "MASCOTE" }
+        tr: { home: "⬅ GERİ", squad: "TAKIM KADROSU", stats: "PERFORMANS", last: "SON MAÇLAR", next: "GELECEK MAÇLAR", w: "Galibiyet", d: "Beraberlik", l: "Mağlubiyet", gf: "Atılan Gol", ga: "Yenilen Gol", av: "Averaj", goal: "GOL", wait: "TARİH BEKLENİYOR", captain: "KAPTAN", player: "OYUNCU", country: "ÜLKE", animal: "MASKOT" },
+        en: { home: "⬅ BACK", squad: "SQUAD", stats: "PERFORMANCE", last: "RECENT", next: "UPCOMING", w: "Wins", d: "Draws", l: "Losses", gf: "Goals For", ga: "Goals Against", av: "GD", goal: "GOALS", wait: "PENDING", captain: "CAPTAIN", player: "PLAYER", country: "COUNTRY", animal: "MASCOT" },
+        pt: { home: "⬅ VOLTAR", squad: "ELENCO", stats: "DESEMPENHO", last: "ÚLTIMOS", next: "PRÓXIMOS", w: "Vitórias", d: "Empates", l: "Derrotas", gf: "Gols Pró", ga: "Gols Contra", av: "Saldo", goal: "GOLS", wait: "PENDENTE", captain: "CAPITÃO", player: "JOGADOR", country: "PAÍS", animal: "MASCOTE" }
     };
 
     let currentLang = 'tr';
@@ -177,18 +189,46 @@
     const teamName = urlParams.get('name');
     let allTeamLogos = {};
 
+    function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById('theme-icon');
+        if (body.getAttribute('data-theme') === 'light') {
+            body.setAttribute('data-theme', 'dark');
+            icon.innerText = '☀️';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.setAttribute('data-theme', 'light');
+            icon.innerText = '🌙';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    if(localStorage.getItem('theme') === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('theme-icon').innerText = '☀️';
+    }
+
     function setLang(lang) {
         currentLang = lang;
         document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('btn-' + lang).classList.add('active');
         const t = translations[lang];
+        
+        // Çevirileri Uygula
         document.getElementById('txt-home').innerText = t.home;
         document.getElementById('txt-squad').innerText = t.squad;
         document.getElementById('txt-stats').innerText = t.stats;
         document.getElementById('txt-last').innerText = t.last;
         document.getElementById('txt-next').innerText = t.next;
+        document.getElementById('txt-w').innerText = t.w;
+        document.getElementById('txt-d').innerText = t.d;
+        document.getElementById('txt-l').innerText = t.l;
+        document.getElementById('txt-gf').innerText = t.gf;
+        document.getElementById('txt-ga').innerText = t.ga;
+        document.getElementById('txt-av').innerText = t.av;
         document.getElementById('txt-country-label').innerText = t.country;
         document.getElementById('txt-animal-label').innerText = t.animal;
+        
         loadTeamData();
     }
 
@@ -249,7 +289,7 @@
                     <img src="${p.foto}" class="player-img">
                     <div class="player-info">
                         <b>${p.pname}</b>
-                        <div style="color:var(--accent); font-weight:800; font-size:12px; margin-top:2px;">⚽ ${p.goals||0} ${t.goal}</div>
+                        <div style="color:var(--primary); font-weight:800; font-size:12px; margin-top:2px;">⚽ ${p.goals||0} ${t.goal}</div>
                     </div>
                     <div class="role-badge ${isCaptain ? 'role-captain' : 'role-player'}">
                         ${isCaptain ? t.captain : t.player}
