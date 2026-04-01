@@ -49,12 +49,14 @@
         .m-score { background: #000; color: var(--accent); padding: 8px 10px; border-radius: 8px; font-size: 18px; font-weight: 900; min-width: 60px; text-align: center; }
         .mvp-tag { font-size: 10px; color: var(--accent); text-align: center; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 5px; font-weight: 700; }
 
-        /* Hafta Navigasyonu */
         .week-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px 0; scrollbar-width: none; }
         .week-scroll::-webkit-scrollbar { display: none; }
         .week-chip { background: var(--card); color: var(--text); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; font-size: 12px; font-weight: 800; }
         .week-chip.active { background: var(--primary); color: white; border-color: var(--accent); }
         .unplayed-dot { color: var(--accent); font-size: 9px; margin-left: 4px; }
+
+        .future-divider { border-top: 2px dashed var(--accent); margin: 20px 0; position: relative; text-align: center; }
+        .future-divider span { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg); padding: 0 10px; font-size: 10px; font-weight: 900; color: var(--accent); text-transform: uppercase; }
 
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; height: 75px;
@@ -150,9 +152,9 @@
     let currentLang = 'tr';
     const langs = ['tr', 'en', 'pt'];
     const translations = {
-        tr: { news: "Haber", puan: "Puan", mac: "Haftalar", stat: "İst.", ga: "A GRUBU", gb: "B GRUBU", takim: "TAKIM", p: "P", av: "AV", wText: "Hafta", gomac: "G/O", gen: "GEN" },
-        en: { news: "News", puan: "League", mac: "Weeks", stat: "Stats", ga: "GROUP A", gb: "GROUP B", takim: "TEAM", p: "P", av: "GD", wText: "Week", gomac: "G/M", gen: "OVR" },
-        pt: { news: "Notícias", puan: "Liga", mac: "Semanas", stat: "Est.", ga: "GRUPO A", gb: "GRUPO B", takim: "TIME", p: "P", av: "SG", wText: "Semana", gomac: "G/J", gen: "GER" }
+        tr: { news: "Haber", puan: "Puan", mac: "Haftalar", stat: "İst.", ga: "A GRUBU", gb: "B GRUBU", takim: "TAKIM", p: "P", av: "AV", wText: "Hafta", gomac: "G/O", gen: "GEN", future: "Gelecek Maçlar" },
+        en: { news: "News", puan: "League", mac: "Weeks", stat: "Stats", ga: "GROUP A", gb: "GROUP B", takim: "TEAM", p: "P", av: "GD", wText: "Week", gomac: "G/M", gen: "OVR", future: "Upcoming Matches" },
+        pt: { news: "Notícias", puan: "Liga", mac: "Semanas", stat: "Est.", ga: "GRUPO A", gb: "GRUPO B", takim: "TIME", p: "P", av: "SG", wText: "Semana", gomac: "G/J", gen: "GER", future: "Próximos Jogos" }
     };
 
     let teamLogos = {}; 
@@ -277,16 +279,24 @@
         });
 
         const weeks = Object.keys(grouped).sort((a,b) => a - b);
-        const lastWeek = weeks[weeks.length - 1];
+        
+        // Oynanmamış maçı olan en küçük haftayı bul (Aktif Hafta)
+        let activeWeek = weeks.find(w => grouped[w].some(m => !m.played)) || weeks[weeks.length - 1];
 
         weekNav.innerHTML = weeks.map(w => {
             const unplayed = grouped[w].filter(m => !m.played).length;
-            return `<div class="week-chip ${w == lastWeek ? 'active' : ''}" onclick="selectWeek(${w}, this)">
+            return `<div class="week-chip ${w == activeWeek ? 'active' : ''}" onclick="selectWeek(${w}, this)">
                 ${w}. ${t.wText} ${unplayed > 0 ? `<span class="unplayed-dot">● ${unplayed}</span>` : ''}
             </div>`;
         }).join('');
 
-        showWeekMatches(lastWeek);
+        showWeekMatches(activeWeek);
+
+        // Yatay kaydırmada aktif haftayı görünür yap
+        setTimeout(() => {
+            const activeChip = document.querySelector('.week-chip.active');
+            if (activeChip) activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }, 300);
     }
 
     function selectWeek(w, btn) {
@@ -297,21 +307,40 @@
 
     function showWeekMatches(w) {
         const cont = document.getElementById('matches-container');
-        const matches = allMatches.filter(m => (m.hafta || 1) == w).sort((a,b) => b.played - a.played);
+        const t = translations[currentLang];
+        const matches = allMatches.filter(m => (m.hafta || 1) == w);
         
-        cont.innerHTML = matches.map(m => {
-            const matchId = m.team1 + "-vs-" + m.team2 + "-" + m.datejav;
-            return `
-            <div class="m-card" onclick="location.href='mac-detay.html?id=${encodeURIComponent(matchId)}'">
-                <div style="text-align:center; font-size:10px; margin-bottom:10px; font-weight:700;">📅 ${m.date || ''} | ${m.ligm ? 'LİG' : 'WPC'}</div>
-                <div class="match-row">
-                    <div class="m-team"><img src="${teamLogos[m.team1]||''}" class="t-logo"><span>${m.team1}</span></div>
-                    <div class="m-score">${m.played ? m.score1+' - '+m.score2 : 'VS'}</div>
-                    <div class="m-team"><img src="${teamLogos[m.team2]||''}" class="t-logo"><span>${m.team2}</span></div>
-                </div>
-                ${m.played ? `<div class="mvp-tag">👑 MVP: ${m.mvp.toUpperCase()} ★ ${m.rating}</div>` : ''}
-            </div>`;
-        }).join('');
+        const playedMatches = matches.filter(m => m.played);
+        const unplayedMatches = matches.filter(m => !m.played);
+
+        let html = '';
+
+        // Oynananlar
+        playedMatches.forEach(m => html += matchTemplate(m));
+
+        // Ayraç ve Oynanmayanlar
+        if (unplayedMatches.length > 0) {
+            if (playedMatches.length > 0) {
+                html += `<div class="future-divider"><span>${t.future}</span></div>`;
+            }
+            unplayedMatches.forEach(m => html += matchTemplate(m));
+        }
+
+        cont.innerHTML = html;
+    }
+
+    function matchTemplate(m) {
+        const matchId = m.team1 + "-vs-" + m.team2 + "-" + m.datejav;
+        return `
+        <div class="m-card" onclick="location.href='mac-detay.html?id=${encodeURIComponent(matchId)}'">
+            <div style="text-align:center; font-size:10px; margin-bottom:10px; font-weight:700;">📅 ${m.date || ''} | ${m.ligm ? 'LİG' : 'WPC'}</div>
+            <div class="match-row">
+                <div class="m-team"><img src="${teamLogos[m.team1]||''}" class="t-logo"><span>${m.team1}</span></div>
+                <div class="m-score">${m.played ? m.score1+' - '+m.score2 : 'VS'}</div>
+                <div class="m-team"><img src="${teamLogos[m.team2]||''}" class="t-logo"><span>${m.team2}</span></div>
+            </div>
+            ${m.played && m.mvp ? `<div class="mvp-tag">👑 MVP: ${m.mvp.toUpperCase()} ★ ${m.rating}</div>` : ''}
+        </div>`;
     }
 
     function filterStats(type, btn) {
