@@ -6,14 +6,12 @@
     <title>Oyuncu Profili | Bobblekolik</title>
     <style>
         :root {
-            /* AYDINLIK TEMA */
             --bg: #f8f9fa; --card: #ffffff; --text: #2d3436; 
             --primary: #800000; --accent: #ffd700; --border: #e0e0e0;
             --sub-text: #636e72; --stat-card: #ffffff;
         }
 
         [data-theme="dark"] {
-            /* KARANLIK TEMA */
             --bg: #0f0f0f; --card: #1a1a1a; --text: #e8e1d1;
             --border: #2a2a2a; --sub-text: #a0a0a0;
             --stat-card: #252525;
@@ -22,7 +20,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
         body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
 
-        /* Üst Navigasyon */
         .back-nav { 
             position: sticky; top: 0; z-index: 1000; height: 60px;
             background: var(--primary); display: flex; align-items: center; 
@@ -35,7 +32,6 @@
         .lang-btn.active { opacity: 1; border-width: 2px; transform: scale(1.1); }
         .lang-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Profil Kartı Üst Kısım */
         .profile-header {
             background: linear-gradient(180deg, var(--primary) 0%, var(--bg) 100%);
             padding: 40px 15px 60px;
@@ -43,64 +39,70 @@
         }
         .player-img-wrapper { position: relative; display: inline-block; margin-bottom: 20px; }
         .player-photo {
-            width: 150px; height: 150px; border-radius: 30px; object-fit: cover;
+            width: 140px; height: 140px; border-radius: 30px; object-fit: cover;
             border: 4px solid var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
-        .player-name { font-size: 32px; font-weight: 900; color: #fff; text-shadow: 2px 2px 10px rgba(0,0,0,0.3); margin-top: 10px; }
+        /* GEN Rozeti */
+        .gen-badge {
+            position: absolute; bottom: -10px; right: -10px;
+            background: var(--accent); color: #000;
+            width: 45px; height: 45px; border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 900; border: 3px solid var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .gen-badge small { font-size: 8px; line-height: 1; }
+        .gen-badge span { font-size: 18px; line-height: 1; }
 
-        /* Rozetler */
-        .badges-row { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .player-name { font-size: 28px; font-weight: 900; color: #fff; text-shadow: 2px 2px 10px rgba(0,0,0,0.3); margin-top: 10px; }
+
+        .badges-row { display: flex; justify-content: center; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
         .badge-pill {
             background: var(--card); border: 1px solid var(--border);
-            padding: 6px 14px; border-radius: 50px; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer;
+            padding: 6px 12px; border-radius: 50px; display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .badge-pill img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; }
-        .badge-pill span { font-size: 12px; font-weight: 800; color: var(--text); }
+        .badge-pill img { width: 20px; height: 20px; border-radius: 50%; object-fit: contain; }
+        .badge-pill span { font-size: 11px; font-weight: 800; color: var(--text); }
 
-        /* İstatistikler (Grid) */
-        .main-container { padding: 0 15px; margin-top: -40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .main-container { padding: 0 12px; margin-top: -30px; max-width: 600px; margin-left: auto; margin-right: auto; }
         
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
+        /* İstatistik Izgarası - 3 Kolon */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
         .stat-card {
-            background: var(--stat-card); padding: 20px; border-radius: 20px;
-            text-align: center; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background: var(--stat-card); padding: 15px 5px; border-radius: 16px;
+            text-align: center; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .stat-val { display: block; font-size: 32px; font-weight: 900; color: var(--primary); }
-        .stat-label { font-size: 11px; font-weight: 800; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { display: block; font-size: 24px; font-weight: 900; color: var(--primary); }
+        .stat-label { font-size: 9px; font-weight: 800; color: var(--sub-text); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Biyografi Bölümü */
         .info-card {
-            background: var(--card); border-radius: 24px; padding: 25px;
-            border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            background: var(--card); border-radius: 20px; padding: 20px;
+            border: 1px solid var(--border); box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
         }
         .info-card h2 { 
-            font-size: 16px; font-weight: 900; color: var(--primary); 
-            margin-bottom: 15px; display: flex; align-items: center; gap: 8px;
-            text-transform: uppercase;
+            font-size: 14px; font-weight: 900; color: var(--primary); 
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
         }
         .info-card h2::after { content: ''; height: 2px; flex: 1; background: var(--accent); opacity: 0.3; }
-        .bio-text { font-size: 14px; color: var(--text); line-height: 1.7; opacity: 0.9; white-space: pre-line; }
+        .bio-text { font-size: 13px; color: var(--text); line-height: 1.6; opacity: 0.9; white-space: pre-line; }
 
-        /* Instagram Butonu */
         .insta-btn {
             display: none; align-items: center; justify-content: center; gap: 10px;
             background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            color: white; text-decoration: none; padding: 16px; border-radius: 18px;
-            font-weight: 900; font-size: 14px; margin-bottom: 40px;
-            box-shadow: 0 10px 20px rgba(220, 39, 67, 0.2);
+            color: white; text-decoration: none; padding: 14px; border-radius: 15px;
+            font-weight: 900; font-size: 13px; margin-bottom: 40px;
         }
-        .insta-btn img { width: 20px; height: 20px; filter: brightness(0) invert(1); }
+        .insta-btn img { width: 18px; height: 18px; filter: brightness(0) invert(1); }
 
         .season-badge {
             background: var(--accent); color: #000; font-size: 10px; font-weight: 900;
-            padding: 4px 12px; border-radius: 10px; margin-bottom: 10px; display: inline-block;
+            padding: 4px 12px; border-radius: 10px; margin-bottom: 15px; display: inline-block;
         }
-
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
 <nav class="back-nav">
     <a href="index.html" class="back-btn" id="txt-back">⬅ GERİ DÖN</a>
@@ -109,7 +111,6 @@
         <div class="lang-picker">
             <button class="lang-btn active" onclick="setLang('tr')" id="btn-tr"><img src="https://flagcdn.com/w40/tr.png"></button>
             <button class="lang-btn" onclick="setLang('en')" id="btn-en"><img src="https://flagcdn.com/w40/gb.png"></button>
-            <button class="lang-btn" onclick="setLang('pt')" id="btn-pt"><img src="https://flagcdn.com/w40/pt.png"></button>
         </div>
     </div>
 </nav>
@@ -117,6 +118,10 @@
 <header class="profile-header">
     <div class="player-img-wrapper">
         <img id="p-foto" src="" class="player-photo" alt="Player">
+        <div class="gen-badge">
+            <small>GEN</small>
+            <span id="p-gen">0</span>
+        </div>
     </div>
     <h1 id="p-name" class="player-name">YÜKLENİYOR...</h1>
     
@@ -139,6 +144,10 @@
 
     <div class="stats-grid">
         <div class="stat-card">
+            <span class="stat-val" id="p-mac">0</span>
+            <span class="stat-label" id="lbl-mac">MAÇ</span>
+        </div>
+        <div class="stat-card">
             <span class="stat-val" id="p-goals">0</span>
             <span class="stat-label" id="lbl-gol">GOL</span>
         </div>
@@ -147,12 +156,16 @@
             <span class="stat-label" id="lbl-asist">ASİST</span>
         </div>
         <div class="stat-card">
-            <span class="stat-val" id="p-rating">0.0</span>
-            <span class="stat-label" id="lbl-rat">RATING</span>
+            <span class="stat-val" id="p-go">0.0</span>
+            <span class="stat-label" id="lbl-go">G/O</span>
         </div>
         <div class="stat-card">
-            <span class="stat-val" id="p-mac">0</span>
-            <span class="stat-label" id="lbl-mac">MAÇ</span>
+            <span class="stat-val" id="p-rating">0.0</span>
+            <span class="stat-label" id="lbl-rat">RAT</span>
+        </div>
+        <div class="stat-card" style="background: rgba(255, 215, 0, 0.1); border-color: var(--accent);">
+            <span class="stat-val" style="color: #d4af37;" id="p-mvp">0</span>
+            <span class="stat-label">MVP</span>
         </div>
     </div>
 
@@ -175,9 +188,8 @@
     const db = firebase.firestore();
 
     const translations = {
-        tr: { back: "⬅ GERİ DÖN", bio: "KARİYER & BİLGİ", gol: "GOL", asist: "ASİST", rat: "RATING", mac: "MAÇ", season: "5. SEZON", insta: "INSTAGRAM PROFİLİ" },
-        en: { back: "⬅ GO BACK", bio: "CAREER & INFO", gol: "GOALS", asist: "ASSISTS", rat: "RATING", mac: "MATCH", season: "SEASON 5", insta: "INSTAGRAM PROFILE" },
-        pt: { back: "⬅ VOLTAR", bio: "INFO E CARREIRA", gol: "GOLOS", asist: "ASSISTÊNCIAS", rat: "AVALIAÇÃO", mac: "JOGO", season: "5ª TEMPORADA", insta: "PERFIL DO INSTAGRAM" }
+        tr: { back: "⬅ GERİ DÖN", bio: "KARİYER & BİLGİ", gol: "GOL", asist: "ASİST", rat: "RAT", mac: "MAÇ", go: "G/O", season: "5. SEZON", insta: "INSTAGRAM PROFİLİ" },
+        en: { back: "⬅ GO BACK", bio: "CAREER & INFO", gol: "GOALS", asist: "ASSISTS", rat: "RAT", mac: "MATCH", go: "G/M", season: "SEASON 5", insta: "INSTAGRAM PROFILE" }
     };
 
     function toggleTheme() {
@@ -203,6 +215,7 @@
         document.getElementById('lbl-asist').innerText = t.asist;
         document.getElementById('lbl-rat').innerText = t.rat;
         document.getElementById('lbl-mac').innerText = t.mac;
+        document.getElementById('lbl-go').innerText = t.go;
         document.getElementById('lbl-season').innerText = t.season;
         document.getElementById('lbl-insta').innerText = t.insta;
     }
@@ -214,15 +227,22 @@
         db.collection("players").where("pname", "==", playerName).onSnapshot(snap => {
             if(!snap.empty) {
                 const data = snap.docs[0].data();
+                const goals = Number(data.goals) || 0;
+                const matches = Number(data.poyn) || 0;
+                const goRatio = matches > 0 ? (goals / matches).toFixed(2) : "0.00";
+
                 document.getElementById('p-name').innerText = data.pname.toUpperCase();
                 document.getElementById('p-foto').src = data.foto;
+                document.getElementById('p-gen').innerText = data.gen || "0";
                 document.getElementById('p-team-name').innerText = data.pteam || "-";
                 document.getElementById('p-country-name').innerText = data.pülke || "-";
-                document.getElementById('p-goals').innerText = data.goals || 0;
+                document.getElementById('p-goals').innerText = goals;
                 document.getElementById('p-asist').innerText = data.asistsay || 0;
                 document.getElementById('p-rating').innerText = data.ratingoy || "0.0";
-                document.getElementById('p-mac').innerText = data.poyn || 0;
-                document.getElementById('player-bio-text').innerText = data.bilgi || "---";
+                document.getElementById('p-mac').innerText = matches;
+                document.getElementById('p-go').innerText = goRatio;
+                document.getElementById('p-mvp').innerText = data.pmvp || 0;
+                document.getElementById('player-bio-text').innerText = data.bilgi || "Henüz bilgi girilmemiş.";
 
                 if(data.instaoy) {
                     const iLink = document.getElementById('insta-link');
