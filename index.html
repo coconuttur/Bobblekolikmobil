@@ -49,7 +49,6 @@
         .m-score { background: #000; color: var(--accent); padding: 8px 10px; border-radius: 8px; font-size: 18px; font-weight: 900; min-width: 60px; text-align: center; }
         .mvp-tag { font-size: 10px; color: var(--accent); text-align: center; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 5px; font-weight: 700; }
 
-        /* Hafta Navigasyonu */
         .week-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px 0; scrollbar-width: none; }
         .week-scroll::-webkit-scrollbar { display: none; }
         .week-chip { background: var(--card); color: var(--text); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; font-size: 12px; font-weight: 800; }
@@ -78,7 +77,6 @@
         .player-row { display: flex; align-items: center; gap: 12px; }
         .p-img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 2px solid var(--primary); }
 
-        /* BRACKET STİLLERİ */
         .bracket-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 10px; scrollbar-width: none; }
         .bracket-col { display: flex; flex-direction: column; justify-content: center; gap: 15px; min-width: 160px; }
         .b-match { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
@@ -100,9 +98,7 @@
 </header>
 
 <main class="app-main">
-    <div id="p-haber" class="page active">
-        <div id="news-container"></div>
-    </div>
+    <div id="p-haber" class="page active"><div id="news-container"></div></div>
 
     <div id="p-puan" class="page">
         <div class="m-card" style="padding:0; overflow:hidden;">
@@ -181,12 +177,8 @@
         pt: { news: "Notícias", puan: "Liga", mac: "Semanas", stat: "Est.", ga: "GRUPO A", gb: "GRUPO B", takim: "TIME", p: "P", av: "SG", wText: "Semana", gomac: "G/J", gen: "GER" }
     };
 
-    let teamLogos = {}; 
-    let allPlayers = [];
-    let allMatches = [];
-    let bracketDataMap = {};
-    let currentTLeague = 'bcl';
-    let currentTSeason = 5;
+    let teamLogos = {}; let allPlayers = []; let allMatches = []; let bracketDataMap = {};
+    let currentTLeague = 'bcl'; let currentTSeason = 5;
 
     function toggleTheme() {
         const body = document.documentElement;
@@ -218,7 +210,6 @@
         document.getElementById('th-lig').innerHTML = headHtml;
         document.getElementById('th-wpc1').innerHTML = headHtml;
         document.getElementById('th-wpc2').innerHTML = headHtml;
-        fetchData();
     }
 
     function appNav(pageId, btn) {
@@ -229,55 +220,29 @@
         if(pageId === 'p-stat') filterStats('goals', document.getElementById('btn-gol'));
     }
 
-    // TURNUVA FONKSİYONLARI
-    function switchLeague(league, btn) {
-        currentTLeague = league;
-        document.querySelectorAll('#p-turnuva .stat-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderBracketSystem();
-    }
-
-    function switchSeason(season, btn) {
-        currentTSeason = season;
-        document.querySelectorAll('#p-turnuva .week-chip').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        renderBracketSystem();
-    }
+    function switchLeague(league, btn) { currentTLeague = league; document.querySelectorAll('#p-turnuva .stat-tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderBracketSystem(); }
+    function switchSeason(season, btn) { currentTSeason = season; document.querySelectorAll('#p-turnuva .week-chip').forEach(c => c.classList.remove('active')); btn.classList.add('active'); renderBracketSystem(); }
 
     function renderBracketSystem() {
         const area = document.getElementById('bracket-render-area');
         const prefix = `${currentTLeague}${currentTSeason}`;
-        
         const getSlot = (id) => {
             const team = bracketDataMap[prefix + 's' + id] || '-';
             const logo = teamLogos[team] || 'https://via.placeholder.com/20';
             return `<div class="b-slot"><img src="${logo}"><span>${team}</span></div>`;
         };
-
-        area.innerHTML = `
-            <div class="bracket-scroll">
-                <div class="bracket-col">
-                    <div class="b-match">${getSlot(1)}${getSlot(2)}</div>
-                    <div class="b-match">${getSlot(3)}${getSlot(4)}</div>
-                </div>
-                <div class="bracket-col">
-                    <div class="b-match">${getSlot(5)}${getSlot(6)}</div>
-                </div>
-                <div class="bracket-col">
-                    <div class="b-champ">
-                        <div class="b-champ-title">ŞAMPİYON</div>
-                        ${getSlot(7)}
-                    </div>
-                </div>
-            </div>`;
+        area.innerHTML = `<div class="bracket-scroll">
+            <div class="bracket-col"><div class="b-match">${getSlot(1)}${getSlot(2)}</div><div class="b-match">${getSlot(3)}${getSlot(4)}</div></div>
+            <div class="bracket-col"><div class="b-match">${getSlot(5)}${getSlot(6)}</div></div>
+            <div class="bracket-col"><div class="b-champ"><div class="b-champ-title">ŞAMPİYON</div>${getSlot(7)}</div></div>
+        </div>`;
     }
 
     function fetchData() {
         db.collection("teams").onSnapshot(snap => {
             let teams = [];
             snap.forEach(doc => {
-                const d = doc.data();
-                teamLogos[d.name] = d.logo;
+                const d = doc.data(); teamLogos[d.name] = d.logo;
                 const av = (Number(d["atilan gol"])||0) - (Number(d["yenilen gol"])||0);
                 teams.push({...d, av, pts: Number(d.points)||0});
             });
@@ -287,11 +252,8 @@
                 let rowCl = (i < 4) ? "row-ucl" : (i < 8 ? "row-uel" : (i >= teams.length - 4 ? "row-uecl" : ""));
                 let avCl = t.av > 0 ? 'av-p' : (t.av < 0 ? 'av-m' : '');
                 return `<tr class="${rowCl}" onclick="location.href='takim.html?name=${encodeURIComponent(t.name)}'">
-                    <td>${i+1}</td>
-                    <td><div class="team-cell"><img src="${t.logo}" class="t-logo"><span>${t.name}</span></div></td>
-                    <td>${t.played||0}</td>
-                    <td class="${avCl}">${t.av > 0 ? '+' : ''}${t.av}</td>
-                    <td style="color:var(--accent); font-weight:900;">${t.pts}</td>
+                    <td>${i+1}</td><td><div class="team-cell"><img src="${t.logo}" class="t-logo"><span>${t.name}</span></div></td>
+                    <td>${t.played||0}</td><td class="${avCl}">${t.av > 0 ? '+' : ''}${t.av}</td><td style="color:var(--accent); font-weight:900;">${t.pts}</td>
                 </tr>`;
             }).join('');
 
@@ -299,13 +261,9 @@
                 let gTeams = teams.filter(t => t.kgrup === g).map(t => ({...t, gp: (Number(t.kgpuan)*3)+(Number(t.kgb)*1), gav: (Number(t.kgatilan)||0)-(Number(t.kgyenilen)||0)})).sort((a,b) => b.gp - a.gp || b.gav - a.gav);
                 document.getElementById(`g${g.toLowerCase()}-body`).innerHTML = gTeams.map((t, i) => {
                     let avCl = t.gav > 0 ? 'av-p' : (t.gav < 0 ? 'av-m' : '');
-                    return `
-                    <tr class="${i<4?'row-wpc':''}" onclick="location.href='takim.html?name=${encodeURIComponent(t.name)}'">
-                        <td>${i+1}</td>
-                        <td><div class="team-cell"><img src="${t.logo}" class="t-logo"><span>${t.name}</span></div></td>
-                        <td>${(Number(t.kgpuan)||0)+(Number(t.kgb)||0)+(Number(t.kgl)||0)}</td>
-                        <td class="${avCl}">${t.gav > 0 ? '+' : ''}${t.gav}</td>
-                        <td style="color:var(--accent); font-weight:900;">${t.gp}</td>
+                    return `<tr class="${i<4?'row-wpc':''}" onclick="location.href='takim.html?name=${encodeURIComponent(t.name)}'">
+                        <td>${i+1}</td><td><div class="team-cell"><img src="${t.logo}" class="t-logo"><span>${t.name}</span></div></td>
+                        <td>${(Number(t.kgpuan)||0)+(Number(t.kgb)||0)+(Number(t.kgl)||0)}</td><td class="${avCl}">${t.gav > 0 ? '+' : ''}${t.gav}</td><td style="color:var(--accent); font-weight:900;">${t.gp}</td>
                     </tr>`;
                 }).join('');
             });
@@ -315,68 +273,46 @@
             document.getElementById('news-container').innerHTML = '';
             snap.forEach(doc => {
                 const h = doc.data();
-                document.getElementById('news-container').innerHTML += `
-                <div class="m-card">
-                    ${h.haberfoto ? `<img src="${h.haberfoto}" style="width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
-                    <div style="font-weight:900; font-size:16px; margin-bottom:5px;">${h.haberad.toUpperCase()}</div>
-                    <div style="font-size:13px; opacity:0.8;">${h.haberdetay}</div>
-                </div>`;
+                document.getElementById('news-container').innerHTML += `<div class="m-card">${h.haberfoto ? `<img src="${h.haberfoto}" style="width:100%; border-radius:8px; margin-bottom:10px;">` : ''}<div style="font-weight:900; font-size:16px; margin-bottom:5px;">${h.haberad.toUpperCase()}</div><div style="font-size:13px; opacity:0.8;">${h.haberdetay}</div></div>`;
             });
         });
 
-        db.collection("matches").onSnapshot(snap => {
-            allMatches = [];
-            snap.forEach(d => allMatches.push(d.data()));
-            renderWeeks();
+        db.collection("matches").onSnapshot(snap => { allMatches = []; snap.forEach(d => allMatches.push(d.data())); renderWeeks(); });
+
+        db.collection("players").onSnapshot(snap => {
+            allPlayers = [];
+            snap.forEach(d => {
+                let p = d.data();
+                p.pname = p.pname || p.name || "Bilinmiyor";
+                allPlayers.push(p);
+            });
         });
 
-        db.collection("players").get().then(s => { 
-            allPlayers = []; 
-            s.forEach(d => allPlayers.push(d.data())); 
-        });
-
-        // TURNUVA VERİSİNİ ÇEK
-        db.collection("brackets").doc("data").onSnapshot(doc => {
-            if(doc.exists) {
-                bracketDataMap = doc.data();
-                renderBracketSystem();
-            }
-        });
+        db.collection("brackets").doc("data").onSnapshot(doc => { if(doc.exists) { bracketDataMap = doc.data(); renderBracketSystem(); } });
     }
 
     function renderWeeks() {
         const t = translations[currentLang];
         const weekNav = document.getElementById('week-nav');
         const grouped = {};
-        allMatches.forEach(m => {
-            const w = m.hafta || 1;
-            if(!grouped[w]) grouped[w] = [];
-            grouped[w].push(m);
-        });
+        allMatches.forEach(m => { const w = m.hafta || 1; if(!grouped[w]) grouped[w] = []; grouped[w].push(m); });
         const weeks = Object.keys(grouped).sort((a,b) => a - b);
         const lastWeek = weeks[weeks.length - 1];
         weekNav.innerHTML = weeks.map(w => {
             const unplayed = grouped[w].filter(m => !m.played).length;
-            return `<div class="week-chip ${w == lastWeek ? 'active' : ''}" onclick="selectWeek(${w}, this)">
-                ${w}. ${t.wText} ${unplayed > 0 ? `<span class="unplayed-dot">● ${unplayed}</span>` : ''}
-            </div>`;
+            return `<div class="week-chip ${w == lastWeek ? 'active' : ''}" onclick="selectWeek(${w}, this)">${w}. ${t.wText} ${unplayed > 0 ? `<span class="unplayed-dot">● ${unplayed}</span>` : ''}</div>`;
         }).join('');
         showWeekMatches(lastWeek);
     }
 
-    function selectWeek(w, btn) {
-        document.querySelectorAll('.week-chip').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        showWeekMatches(w);
-    }
+    function selectWeek(w, btn) { document.querySelectorAll('.week-chip').forEach(c => c.classList.remove('active')); btn.classList.add('active'); showWeekMatches(w); }
 
     function showWeekMatches(w) {
         const cont = document.getElementById('matches-container');
         const matches = allMatches.filter(m => (m.hafta || 1) == w).sort((a,b) => b.played - a.played);
         cont.innerHTML = matches.map(m => {
             const matchId = m.team1 + "-vs-" + m.team2 + "-" + m.datejav;
-            return `
-            <div class="m-card" onclick="location.href='mac-detay.html?id=${encodeURIComponent(matchId)}'">
+            return `<div class="m-card" onclick="location.href='mac-detay.html?id=${encodeURIComponent(matchId)}'">
                 <div style="text-align:center; font-size:10px; margin-bottom:10px; font-weight:700;">📅 ${m.date || ''} | ${m.ligm ? 'LİG' : 'WPC'}</div>
                 <div class="match-row">
                     <div class="m-team"><img src="${teamLogos[m.team1]||''}" class="t-logo"><span>${m.team1}</span></div>
@@ -392,33 +328,24 @@
         document.querySelectorAll('.stat-tab-btn').forEach(b => b.classList.remove('active'));
         if(btn) btn.classList.add('active');
         let processed = allPlayers.map(p => {
-            let gol = Number(p.goals) || 0;
-            let mac = Number(p.poyn) || 1;
-            return {
-                ...p,
-                gol_mac: (gol / mac).toFixed(2),
-                gen: Number(p.gen) || 0,
-                ratingoy: Number(p.ratingoy) || 0,
-                asistsay: Number(p.asistsay) || 0,
-                goals: gol
-            };
+            let gol = Number(p.goals) || 0; let mac = Number(p.poyn) || 1;
+            return { ...p, gol_mac: (gol / mac).toFixed(2), gen: Number(p.gen) || 0, ratingoy: Number(p.ratingoy) || 0, asistsay: Number(p.asistsay) || 0, goals: gol };
         });
         let sorted = processed.sort((a,b) => b[type] - a[type]);
         document.getElementById('stat-list-container').innerHTML = sorted.map((p, i) => `
             <div class="m-card player-row" onclick="location.href='oyuncu-detay.html?name=${encodeURIComponent(p.pname)}'">
                 <div style="font-weight:900; width:20px; font-size:12px;">${i+1}</div>
                 <img src="${p.foto}" class="p-img">
-                <div style="flex:1">
-                    <div style="font-weight:800; font-size:13px;">${p.pname.toUpperCase()}</div>
-                    <div style="font-size:10px; opacity:0.7;">${p.pteam}</div>
-                </div>
-                <div style="text-align:right">
-                    <div style="font-size:18px; font-weight:900; color:var(--accent)">${p[type]}</div>
-                </div>
+                <div style="flex:1"><div style="font-weight:800; font-size:13px;">${p.pname.toUpperCase()}</div><div style="font-size:10px; opacity:0.7;">${p.pteam}</div></div>
+                <div style="text-align:right"><div style="font-size:18px; font-weight:900; color:var(--accent)">${p[type]}</div></div>
             </div>`).join('');
     }
 
-    updateUI();
+    // AÇILIŞ
+    document.addEventListener("DOMContentLoaded", () => {
+        updateUI(); 
+        fetchData(); 
+    });
 </script>
 </body>
 </html>
